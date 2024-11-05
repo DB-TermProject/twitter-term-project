@@ -5,9 +5,13 @@ import org.example.util.exception.SqlExecutionException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.example.domain.follow.dto.FollowReqDTO.Follow;
+import static org.example.domain.follow.dto.FollowResDTO.FollowSummary;
 
 public class FollowRepository {
 
@@ -36,6 +40,62 @@ public class FollowRepository {
             statement.setLong(2, dto.to());
 
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
+
+    public List<FollowSummary> findFollowers(Long id) {
+        String sql = "SELECT u.id, u.name, u.organization, u.profile_image_url, u.is_verified " +
+                "FROM follow f JOIN user u ON f.follower_id = u.id WHERE following_id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            List<FollowSummary> followers = new ArrayList<>();
+            while (resultSet.next()) {
+                Long followerId = resultSet.getLong("id");
+                String name = resultSet.getString("name");
+                String organization = resultSet.getString("organization");
+                String profileImageUrl = resultSet.getString("profile_image_url");
+                Boolean isVerified = resultSet.getBoolean("is_verified");
+
+                followers.add(new FollowSummary(followerId, name, organization, profileImageUrl, isVerified));
+            }
+
+            return followers;
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
+
+    public List<FollowSummary> findFollowings(Long id) {
+        String sql = "SELECT u.id, u.name, u.organization, u.profile_image_url, u.is_verified " +
+                "FROM follow f JOIN user u ON f.following_id = u.id WHERE follower_id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            List<FollowSummary> followings = new ArrayList<>();
+            while (resultSet.next()) {
+                Long followerId = resultSet.getLong("id");
+                String name = resultSet.getString("name");
+                String organization = resultSet.getString("organization");
+                String profileImageUrl = resultSet.getString("profile_image_url");
+                Boolean isVerified = resultSet.getBoolean("is_verified");
+
+                followings.add(new FollowSummary(followerId, name, organization, profileImageUrl, isVerified));
+            }
+
+            return followings;
         } catch (SQLException e) {
             throw new SqlExecutionException();
         }
