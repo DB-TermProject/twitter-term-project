@@ -11,6 +11,7 @@ public class PostService {
     private final PostRepository postRepository = new PostRepository();
 
     public void save(Long id, Save dto) {
+        dto.validate();
         postRepository.save(id, dto);
     }
 

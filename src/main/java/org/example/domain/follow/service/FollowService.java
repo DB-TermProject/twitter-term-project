@@ -13,12 +13,14 @@ public class FollowService {
     private final UserRepository userRepository = new UserRepository();
 
     public void follow(Follow dto) {
+        dto.validate();
         followRepository.follow(dto);
         userRepository.updateFollowingCount(dto.from(), 1L);
         userRepository.updateFollowerCount(dto.to(), 1L);
     }
 
     public void unfollow(Follow dto) {
+        dto.validate();
         followRepository.unfollow(dto);
         userRepository.updateFollowingCount(dto.from(), -1L);
         userRepository.updateFollowerCount(dto.to(), -1L);
