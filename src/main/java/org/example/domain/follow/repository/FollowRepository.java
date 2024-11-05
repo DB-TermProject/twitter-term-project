@@ -12,6 +12,7 @@ import java.util.List;
 
 import static org.example.domain.follow.dto.FollowReqDTO.Follow;
 import static org.example.domain.follow.dto.FollowResDTO.FollowSummary;
+import static org.example.domain.follow.dto.FollowResDTO.FollowSummary.toFollowSummary;
 
 public class FollowRepository {
 
@@ -58,13 +59,7 @@ public class FollowRepository {
 
             List<FollowSummary> followers = new ArrayList<>();
             while (resultSet.next()) {
-                Long followerId = resultSet.getLong("id");
-                String name = resultSet.getString("name");
-                String organization = resultSet.getString("organization");
-                String profileImageUrl = resultSet.getString("profile_image_url");
-                Boolean isVerified = resultSet.getBoolean("is_verified");
-
-                followers.add(new FollowSummary(followerId, name, organization, profileImageUrl, isVerified));
+                followers.add(toFollowSummary(resultSet));
             }
 
             return followers;
@@ -86,13 +81,7 @@ public class FollowRepository {
 
             List<FollowSummary> followings = new ArrayList<>();
             while (resultSet.next()) {
-                Long followerId = resultSet.getLong("id");
-                String name = resultSet.getString("name");
-                String organization = resultSet.getString("organization");
-                String profileImageUrl = resultSet.getString("profile_image_url");
-                Boolean isVerified = resultSet.getBoolean("is_verified");
-
-                followings.add(new FollowSummary(followerId, name, organization, profileImageUrl, isVerified));
+                followings.add(FollowSummary.toFollowSummary(resultSet));
             }
 
             return followings;
