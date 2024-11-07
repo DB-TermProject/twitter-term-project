@@ -26,11 +26,24 @@ public class FollowService {
         userRepository.updateFollowerCount(dto.to(), -1L);
     }
 
+    public void accept(Follow dto) {
+        dto.validate();
+        followRepository.accept(dto);
+    }
+
     public List<FollowSummary> findFollowers(Long id) {
-        return followRepository.findFollowers(id);
+        return followRepository.findFollowers(id, "ACCEPTED");
     }
 
     public List<FollowSummary> findFollowings(Long id) {
-        return followRepository.findFollowings(id);
+        return followRepository.findFollowings(id, "ACCEPTED");
+    }
+
+    public List<FollowSummary> findFollowingRequests(Long id) {     // 나의 신청한 팔로우 요청 목록
+        return followRepository.findFollowers(id, "PENDING");
+    }
+
+    public List<FollowSummary> findFollowersRequests(Long id) {     // 내가 받은 팔로우 요청 목록
+        return followRepository.findFollowers(id, "PENDING");
     }
 }

@@ -62,6 +62,4 @@ public class PostRepository {
             throw new SqlExecutionException();
         }
     }
-
-
 }
