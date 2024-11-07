@@ -66,7 +66,7 @@ public class HomeFeedPage extends JFrame {
 
             // "Twitter" 텍스트 라벨 생성 및 폰트 설정
             JLabel titleLabel = new JLabel("Twitter");
-            titleLabel.setFont(new Font("Arial", Font.BOLD, 14));  // Arial 폰트, 굵게, 크기 14로 설정
+            titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));  // 맑은 고딕 폰트, 굵게, 크기 14로 설정
 
             // 로고와 텍스트를 왼쪽 패널에 추가
             leftPanel.add(logoLabel);
@@ -89,7 +89,7 @@ public class HomeFeedPage extends JFrame {
         try {
             // 데이터베이스에서 피드 개수 확인
             //userService.getFeedCount(connection);  // UserService에 getFeedCount 메소드 필요
-            int feedCount = 0;// 지금은 임의로 10
+            int feedCount = 10;// 지금은 임의로 10
 
             if (feedCount > 0) {
                 // 피드가 있는 경우
@@ -165,7 +165,7 @@ public class HomeFeedPage extends JFrame {
         userInfoPanel.setBackground(Color.WHITE);
 
         JLabel nameLabel = new JLabel("사용자 이름");
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        nameLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 
         JLabel handleLabel = new JLabel("@handle · 2h");
         handleLabel.setForeground(Color.GRAY);
@@ -486,13 +486,13 @@ public class HomeFeedPage extends JFrame {
 
         // 메시지 텍스트
         JLabel messageLabel = new JLabel("아직 작성된 트윗이 없습니다");
-        messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        messageLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         messageLabel.setForeground(Color.GRAY);
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // 부가 설명 텍스트
         JLabel subMessageLabel = new JLabel("첫 번째 트윗을 작성해보세요!");
-        subMessageLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        subMessageLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
         subMessageLabel.setForeground(Color.GRAY);
         subMessageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
