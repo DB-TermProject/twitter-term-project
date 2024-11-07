@@ -90,6 +90,7 @@ public class HomeFeedPage extends JFrame {
             // 데이터베이스에서 피드 개수 확인
             //userService.getFeedCount(connection);  // UserService에 getFeedCount 메소드 필요
             int feedCount = 0;// 지금은 임의로 10
+
             if (feedCount > 0) {
                 // 피드가 있는 경우
                 for (int i = 0; i < feedCount; i++) {

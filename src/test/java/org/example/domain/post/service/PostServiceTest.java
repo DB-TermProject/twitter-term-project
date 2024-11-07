@@ -1,7 +1,7 @@
 package org.example.domain.post.service;
 
 import org.example.domain.post.dto.PostReqDTO.Save;
-import org.example.domain.post.dto.PostResDTO.Detail;
+import org.example.domain.post.dto.PostResDTO.PostSummary;
 import org.example.domain.post.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,14 +41,14 @@ class PostServiceTest {
     void 홈_피드_조회() {
         // given
         Long userId = 3L;
-        List<Detail> expectedFeed = Arrays.asList(
-                new Detail(1L, "Post content 1", 5L, 2L, "5분 전", "Alice", "http://example.com/profile1.jpg", true, true),
-                new Detail(2L, "Post content 2", 10L, 4L, "3시간 전", "Bob", "http://example.com/profile2.jpg", false, false)
+        List<PostSummary> expectedFeed = Arrays.asList(
+                new PostSummary(1L, "Post content 1", 5L, 2L, "5분 전", "Alice", "http://example.com/profile1.jpg", true),
+                new PostSummary(2L, "Post content 2", 10L, 4L, "3시간 전", "Bob", "http://example.com/profile2.jpg", false)
         );
 
         // when
         when(postRepository.findHomeFeed(userId)).thenReturn(expectedFeed);
-        List<Detail> feed = postService.findHomeFeed(userId);
+        List<PostSummary> feed = postService.findHomeFeed(userId);
 
         feed.listIterator().forEachRemaining(System.out::println);
     }

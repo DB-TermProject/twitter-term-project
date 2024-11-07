@@ -1,5 +1,6 @@
 package org.example.domain.user.service;
 
+
 import org.example.domain.user.dto.UserReqDTO.Login;
 import org.example.domain.user.dto.UserReqDTO.SignUp;
 import org.example.domain.user.dto.UserResDTO.LoginResponse;
@@ -24,8 +25,6 @@ public class UserService {
     }
 
     public void signUp(SignUp dto) {
-        dto.validate();
-
         if (userRepository.existsByEmail(dto.email()))
             throw new UserExistsException();
 
@@ -33,26 +32,14 @@ public class UserService {
     }
 
     public ProfileResponse updateProfile(Long id, Profile dto) {
-        dto.validate();
         userRepository.updateProfile(id, dto);
         return new ProfileResponse(dto.info(), dto.profile_image_url(), dto.organization(), dto.is_public());
     }
 
     public void updatePassword(Long id, Password dto) {
-        dto.validate();
-
         if(!dto.newPassword().equals(dto.confirmPassword()))
             throw new PasswordMismatchException();
 
         userRepository.updatePassword(id, dto.newPassword());
-    }
-
-    public boolean isPublic(Long id) {
-        return userRepository.isPublic(id);
-    }
-
-    public void updateFollowCount(Long from, Long to, Long value) {
-        userRepository.updateFollowingCount(from, value);
-        userRepository.updateFollowerCount(to, value);
     }
 }
