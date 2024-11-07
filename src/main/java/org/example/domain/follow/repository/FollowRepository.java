@@ -33,7 +33,6 @@ public class FollowRepository {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }
