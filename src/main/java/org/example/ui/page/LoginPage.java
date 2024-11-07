@@ -162,7 +162,6 @@ public class LoginPage extends JFrame {
             char[] password = passwordField.getPassword();
             String strPassword = new String(password);
             setVisible(false); // 창 숨기기
-            userService.logInUser(userId, strPassword, con, this); // 로그인 메소드 호출
         });
 
 
