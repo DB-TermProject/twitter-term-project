@@ -26,6 +26,10 @@ public class FollowService {
         userRepository.updateFollowerCount(dto.to(), -1L);
     }
 
+    public boolean alreadyFollowed(Follow dto) {
+        return followRepository.alreadyFollow(dto);
+    }
+
     public void accept(Follow dto) {
         dto.validate();
         followRepository.accept(dto);

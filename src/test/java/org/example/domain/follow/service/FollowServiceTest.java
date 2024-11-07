@@ -30,7 +30,7 @@ class FollowServiceTest {
     @Test
     void 팔로우() {
         // given
-        Follow followDto = new Follow(3L, 4L); // Example IDs for `from` and `to`
+        Follow followDto = new Follow(9L, 10L); // Example IDs for `from` and `to`
 
         // when
         followService.follow(followDto);
