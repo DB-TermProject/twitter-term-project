@@ -1,8 +1,7 @@
-package org.example.ui.page;
+package org.example.ui.design.button;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 
 public class RoundJButton extends JButton {
     private int radius; // 버튼의 모서리 둥글기 반지름
