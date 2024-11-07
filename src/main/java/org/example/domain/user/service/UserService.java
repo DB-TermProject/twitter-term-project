@@ -9,6 +9,9 @@ import org.example.util.exception.InvalidAuthenticationException;
 import org.example.util.exception.PasswordMismatchException;
 import org.example.util.exception.UserExistsException;
 
+import javax.swing.*;
+import java.sql.Connection;
+
 import static org.example.domain.user.dto.UserReqDTO.Password;
 import static org.example.domain.user.dto.UserReqDTO.Profile;
 
@@ -45,5 +48,10 @@ public class UserService {
             throw new PasswordMismatchException();
 
         userRepository.updatePassword(id, dto.newPassword());
+    }
+
+    public void logInUser(String userId, String strPassword, Connection con, JFrame parentFrame) {
+        // 로그인 로직을 여기에 작성합니다.
+        // 예를 들어, 데이터베이스와의 연결을 통해 사용자 인증을 수행할 수 있습니다.
     }
 }
