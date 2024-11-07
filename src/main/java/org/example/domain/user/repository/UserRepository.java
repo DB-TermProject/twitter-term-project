@@ -47,6 +47,20 @@ public class UserRepository {
         }
     }
 
+    public boolean isPublic(Long id) {
+        String sql = "SELECT is_public FROM user WHERE id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, id);
+
+            return statement.executeQuery().getBoolean("is_public");
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
+
     public void save(SignUp dto) {
         String sql = "INSERT INTO user (email, password, name) VALUES (?, ?, ?)";
 

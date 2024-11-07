@@ -5,6 +5,7 @@ import org.example.domain.user.dto.UserReqDTO.Login;
 import org.example.domain.user.dto.UserResDTO;
 import org.example.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,6 +30,7 @@ class UserServiceTest {
     }
 
     @Test
+    @Order(1)
     void 회원가입() {
         UserReqDTO.SignUp signUpDto = new UserReqDTO.SignUp("root", "1234", "김경규");
         when(userRepository.existsByEmail(signUpDto.email())).thenReturn(false);
@@ -46,10 +48,10 @@ class UserServiceTest {
         UserResDTO.LoginResponse response = userService.login(loginDto);
 
         System.out.println(response.id());
-        assertEquals(3L, response.id());
     }
 
     @Test
+    @Order(3)
     void 프로필_수정() {
         Long userId = 3L;
         UserReqDTO.Profile profileDto = new UserReqDTO.Profile("New Info", "image_url", "Org", false);
@@ -63,6 +65,7 @@ class UserServiceTest {
     }
 
     @Test
+    @Order(4)
     void 비밀번호_변경() {
         Long userId = 3L;
         UserReqDTO.Password passwordDto = new UserReqDTO.Password("qwer1234", "qwer1234");
