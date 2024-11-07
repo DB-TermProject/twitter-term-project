@@ -46,4 +46,13 @@ public class UserService {
 
         userRepository.updatePassword(id, dto.newPassword());
     }
+
+    public boolean isPublic(Long id) {
+        return userRepository.isPublic(id);
+    }
+
+    public void updateFollowCount(Long from, Long to, Long value) {
+        userRepository.updateFollowingCount(from, value);
+        userRepository.updateFollowerCount(to, value);
+    }
 }

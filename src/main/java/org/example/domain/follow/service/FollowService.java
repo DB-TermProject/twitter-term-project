@@ -3,27 +3,29 @@ package org.example.domain.follow.service;
 import org.example.domain.follow.dto.FollowReqDTO.Follow;
 import org.example.domain.follow.dto.FollowResDTO.FollowSummary;
 import org.example.domain.follow.repository.FollowRepository;
-import org.example.domain.user.repository.UserRepository;
+import org.example.domain.user.service.UserService;
 
 import java.util.List;
 
 public class FollowService {
 
     private final FollowRepository followRepository = new FollowRepository();
-    private final UserRepository userRepository = new UserRepository();
+    private final UserService userService = new UserService();
 
     public void follow(Follow dto) {
         dto.validate();
-        followRepository.follow(dto);
-        userRepository.updateFollowingCount(dto.from(), 1L);
-        userRepository.updateFollowerCount(dto.to(), 1L);
+        if(userService.isPublic(dto.to())) {
+            followRepository.follow(dto, "ACCEPTED");
+            userService.updateFollowCount(dto.from(), dto.to(), 1L);
+        } else {
+            followRepository.follow(dto, "PENDING");
+        }
     }
 
     public void unfollow(Follow dto) {
         dto.validate();
         followRepository.unfollow(dto);
-        userRepository.updateFollowingCount(dto.from(), -1L);
-        userRepository.updateFollowerCount(dto.to(), -1L);
+        userService.updateFollowCount(dto.from(), dto.to(), -1L);
     }
 
     public boolean alreadyFollowed(Follow dto) {

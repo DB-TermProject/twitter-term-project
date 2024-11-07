@@ -16,12 +16,9 @@ import static org.example.domain.follow.dto.FollowResDTO.FollowSummary.toFollowS
 
 public class FollowRepository {
 
-    public void follow(Follow dto) {
+    public void follow(Follow dto, String status) {
         String sql = """
-            INSERT INTO follow (follower_id, following_id, status)
-            SELECT ?, ?, CASE WHEN u.is_public = TRUE THEN 'ACCEPTED' ELSE 'PENDING' END
-            FROM user u
-            WHERE u.id = ?
+            INSERT INTO follow (follower_id, following_id, status) values (?, ?, ?)
         """;
 
         try (Connection connection = JdbcConfig.getConnection();
@@ -29,7 +26,7 @@ public class FollowRepository {
 
             statement.setLong(1, dto.from());
             statement.setLong(2, dto.to());
-            statement.setLong(3, dto.to());
+            statement.setString(3, status);
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -99,14 +96,13 @@ public class FollowRepository {
     }
 
     public void accept(Follow dto) {    // 테스트 대기 중
-        String sql = "UPDATE follow SET status = ? WHERE following_id = ? AND follower_id = ?";
+        String sql = "UPDATE follow SET status = 'ACCEPTED' WHERE following_id = ? AND follower_id = ?";
 
         try (Connection connection = JdbcConfig.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, "ACCEPTED");
-            statement.setLong(2, dto.to());
-            statement.setLong(3, dto.from());
+            statement.setLong(1, dto.to());
+            statement.setLong(2, dto.from());
 
             statement.executeUpdate();
         } catch (SQLException e) {
