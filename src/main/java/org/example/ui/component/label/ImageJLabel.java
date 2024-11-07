@@ -1,4 +1,4 @@
-package org.example.ui.design.label;
+package org.example.ui.component.label;
 
 import javax.swing.*;
 import java.awt.*;

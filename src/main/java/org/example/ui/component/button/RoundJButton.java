@@ -1,4 +1,4 @@
-package org.example.ui.design.button;
+package org.example.ui.component.button;
 
 import javax.swing.*;
 import java.awt.*;

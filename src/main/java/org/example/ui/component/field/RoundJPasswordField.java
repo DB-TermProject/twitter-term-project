@@ -1,4 +1,4 @@
-package org.example.ui.design.field;
+package org.example.ui.component.field;
 
 import javax.swing.*;
 import java.awt.*;

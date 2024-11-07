@@ -1,11 +1,11 @@
 package org.example.ui.page;
 
 import org.example.domain.user.service.UserService;
-import org.example.ui.design.button.RoundJButton;
-import org.example.ui.design.field.RoundJPasswordField;
-import org.example.ui.design.field.RoundJTextField;
-import org.example.ui.design.label.ActionJLabel;
-import org.example.ui.design.label.ImageJLabel;
+import org.example.ui.component.button.RoundJButton;
+import org.example.ui.component.field.RoundJPasswordField;
+import org.example.ui.component.field.RoundJTextField;
+import org.example.ui.component.label.ActionJLabel;
+import org.example.ui.component.label.ImageJLabel;
 
 import javax.swing.*;
 import java.awt.*;
