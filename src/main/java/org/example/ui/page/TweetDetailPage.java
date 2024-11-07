@@ -85,7 +85,7 @@ public class TweetDetailPage extends JFrame {
         });
 
         JLabel titleLabel = new JLabel("Tweet");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 
         headerPanel.add(backButton, BorderLayout.WEST);
         headerPanel.add(titleLabel, BorderLayout.CENTER);
@@ -119,7 +119,7 @@ public class TweetDetailPage extends JFrame {
         namePanel.setBackground(Color.WHITE);
 
         JLabel nameLabel = new JLabel(username);
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        nameLabel.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 
         JLabel handleLabel = new JLabel(handle);
         handleLabel.setForeground(Color.GRAY);
@@ -130,7 +130,7 @@ public class TweetDetailPage extends JFrame {
 
         // 트윗 내용
         JLabel contentLabel = new JLabel("<html><body style='width: 350px'>" + tweetContent + "</body></html>");
-        contentLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        contentLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
         contentLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
         // 시간 정보

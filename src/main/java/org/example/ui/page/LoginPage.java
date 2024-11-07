@@ -43,7 +43,7 @@ public class LoginPage extends JFrame {
 
         // Twitter 제목 라벨 생성 및 설정
         JLabel logInToTwitter = new JLabel("Twitter");
-        logInToTwitter.setFont(new Font("sans-serif", Font.BOLD, 26));
+        logInToTwitter.setFont(new Font("맑은 고딕", Font.BOLD, 26));
         logInToTwitter.setHorizontalAlignment(JLabel.CENTER);
 
 
