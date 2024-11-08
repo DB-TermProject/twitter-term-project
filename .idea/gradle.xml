@@ -8,7 +8,7 @@
         <option name="gradleJvm" value="corretto-17" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/../../../../../대학교/2_2/데이터베이스/twitter/twitter-term-project" />
+            <option value="$PROJECT_DIR$" />
           </set>
         </option>
       </GradleProjectSettings>

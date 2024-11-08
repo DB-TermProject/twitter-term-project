@@ -33,13 +33,13 @@ public class SignUpPage extends JFrame {
 
         // 타이틀 "twitter" 텍스트 설정
         JLabel titleLabel = new JLabel("twitter");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 35));
+        titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 35));
         titleLabel.setBounds(70, 10, 150, 50);
         add(titleLabel);
 
         // "Sign Up" 타이틀 추가
         JLabel signUpLabel = new JLabel("Create a new account");
-        signUpLabel.setFont(new Font("Arial", Font.BOLD, 25));
+        signUpLabel.setFont(new Font("맑은 고딕", Font.BOLD, 25));
         signUpLabel.setHorizontalAlignment(SwingConstants.CENTER);
         signUpLabel.setBounds(0, 80, 400, 50);
         add(signUpLabel);
@@ -76,7 +76,7 @@ public class SignUpPage extends JFrame {
 
         // 안내 메시지 레이블
         JLabel guideLabel = new JLabel("<html>By clicking Sign Up, you become a member of our Twitter.<br>You can see and like many posts.</html>");
-        guideLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        guideLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
         guideLabel.setForeground(Color.GRAY); // 흐릿한 색상 적용
         guideLabel.setBounds(30, 330, 320, 40); // 위치 조정
         add(guideLabel);
@@ -84,7 +84,7 @@ public class SignUpPage extends JFrame {
         // Sign Up 버튼
         JButton signUpButton = new JButton("Sign Up");
         signUpButton.setBounds(125, 400, 150, 40);
-        signUpButton.setFont(new Font("Arial", Font.BOLD, 16));
+        signUpButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         signUpButton.setForeground(Color.WHITE);
         signUpButton.setBackground(new Color(0, 200, 0)); // 녹색 배경
         signUpButton.setOpaque(true);
@@ -120,7 +120,7 @@ public class SignUpPage extends JFrame {
 
         // 이미 계정이 있는 경우 로그인 페이지로 이동 안내 레이블
         JLabel alreadyAccountLabel = new JLabel("Already have an account?");
-        alreadyAccountLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        alreadyAccountLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
         alreadyAccountLabel.setForeground(new Color(0, 120, 255)); // 파란색 텍스트
         alreadyAccountLabel.setHorizontalAlignment(SwingConstants.CENTER);
         alreadyAccountLabel.setBounds(0, 450, 400, 30);
