@@ -6,10 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
 
 public class SignUpPage extends JFrame {
 
-    public SignUpPage() {
+    public SignUpPage(Connection con) {
+
+
         setTitle("Twitter Sign Up");
         setSize(400, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -20,7 +23,7 @@ public class SignUpPage extends JFrame {
         getContentPane().setBackground(Color.WHITE);
 
         // 로고 이미지 불러와서 크기 조절
-        ImageIcon originalIcon = new ImageIcon("src/main/java/org/example/ui/page/twitter_logo.png"); // 트위터 로고 이미지 파일 경로
+        ImageIcon originalIcon = new ImageIcon("src/main/java/org/example/asset/TwitterLogo.png"); // 트위터 로고 이미지 파일 경로
         Image scaledImage = originalIcon.getImage().getScaledInstance(50, 40, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(scaledImage);
 
