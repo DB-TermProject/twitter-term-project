@@ -41,7 +41,7 @@ public class UserService {
     public void updatePassword(Long id, Password dto) {
         dto.validate();
 
-        if(!dto.newPassword().equals(dto.confirmPassword()))
+        if(dto.passwordMatches())    // DTO method
             throw new PasswordMismatchException();
 
         userRepository.updatePassword(id, dto.newPassword());

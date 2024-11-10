@@ -42,5 +42,9 @@ public class UserReqDTO {
                 throw new InvalidRequestException();
             }
         }
+
+        public boolean passwordMatches() {
+            return !newPassword().equals(confirmPassword());
+        }
     }
 }
