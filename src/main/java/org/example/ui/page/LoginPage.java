@@ -48,7 +48,7 @@ public class LoginPage extends JFrame {
 
 
         // 트위터 로고 추가
-        ImageJLabel twitterLogo = new ImageJLabel("/org/example/asset/TwitterLogo.png", 50, 50);
+        ImageJLabel twitterLogo = new ImageJLabel("src/main/java/org/example/asset/TwitterLogo.png", 50, 50);
         twitterLogo.setHorizontalAlignment(JLabel.CENTER);
 
 
