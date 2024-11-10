@@ -37,6 +37,7 @@ public class TweetDetailPage extends JFrame {
         setSize(450, 700);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
+        setVisible(true); // 창 보이기
 
         // 뒤로가기 버튼 처리
         addWindowListener(new WindowAdapter() {
