@@ -25,7 +25,7 @@ public class BlockService {
         blockRepository.unblock(dto);
     }
 
-    public List<BlockSummary> findBlocks(Long id) {
+    public List<BlockSummary> read(Long id) {
         return blockRepository.findBlocks(id);
     }
 }

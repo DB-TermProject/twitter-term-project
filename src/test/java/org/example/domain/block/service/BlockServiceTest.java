@@ -64,7 +64,7 @@ class BlockServiceTest {
         BlockSummary summary = new BlockSummary(userId, "Blocked User", "org", "profileImg", true);
         when(blockRepository.findBlocks(userId)).thenReturn(Collections.singletonList(summary));
 
-        List<BlockSummary> result = blockService.findBlocks(userId);
+        List<BlockSummary> result = blockService.read(userId);
 
         result.listIterator().forEachRemaining(System.out::println);
     }
