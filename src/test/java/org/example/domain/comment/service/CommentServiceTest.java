@@ -1,6 +1,7 @@
 package org.example.domain.comment.service;
 
 import org.example.domain.comment.dto.CommentReqDTO;
+import org.example.domain.comment.dto.CommentReqDTO.Update;
 import org.example.domain.comment.dto.CommentResDTO;
 import org.example.domain.comment.repository.CommentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +63,7 @@ class CommentServiceTest {
         when(commentRepository.findComments(postId)).thenReturn(List.of(parentComment));
 
         // when
-        List<CommentResDTO.Detail> comments = commentService.findComments(postId);
+        List<CommentResDTO.Detail> comments = commentService.read(postId);
 
         comments.listIterator().forEachRemaining(System.out::println);
     }
@@ -72,5 +73,11 @@ class CommentServiceTest {
         Long commentId = 4L;
         Long postId = 1L;
         commentService.delete(commentId, postId);
+    }
+
+    @Test
+    void 댓글_수정() {
+        Long commentId = 7L;
+        commentService.update(commentId, new Update("Updated comment content"));
     }
 }
