@@ -17,4 +17,8 @@ public class PostService {
     public List<PostSummary> findHomeFeed(Long id) {
         return postRepository.findHomeFeed(id);
     }
+
+    public void updateCommentCount(Long postId, Long value) {
+        postRepository.updateCommentCount(postId, value);
+    }
 }
