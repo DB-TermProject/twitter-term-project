@@ -12,8 +12,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class TweetDetailPage extends JFrame {
     private final Connection connection;
@@ -24,19 +25,21 @@ public class TweetDetailPage extends JFrame {
     private final String timeStamp;
     private final String commentCount;
     private final String likeCount;
+    private final int commentId=10;  // 댓글 ID를 저장할 필드
     // 댓글 입력 필드 추가
     private TweetField commentField;
     private boolean isCommentFieldVisible = false;  // 토글 상태 저장
+    private TweetField replyField;    // 추가된 부분
 
 
-    public TweetDetailPage(Connection con, String username, String handle,
-                           String tweetContent, String profileImagePath,
-                           String timeStamp, String commentCount, String likeCount) {
+    // 생성자 수정
+    public TweetDetailPage(Connection con, String username, String handle, String tweetContent,
+                           String profileImagePath, String timeStamp, String commentCount,
+                           String likeCount) {  // commentId 파라미터 추가
         this.connection = con;
         this.username = username;
         this.handle = handle;
-        //this.tweetContent = tweetContent;
-        this.tweetContent = "가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하";
+        this.tweetContent = tweetContent;
         this.profileImagePath = profileImagePath;
         this.timeStamp = timeStamp;
         this.commentCount = commentCount;
@@ -53,6 +56,7 @@ public class TweetDetailPage extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setBackground(Color.WHITE);
+        setResizable(false);  // 창 크기 조절 불가능하도록 설정
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -98,18 +102,19 @@ public class TweetDetailPage extends JFrame {
         commentSection.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // 댓글 입력 필드
-        commentField = new TweetField();  // 클래스 필드 초기화
+        commentField = new TweetField();
         commentField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        commentField.setVisible(false);  // 기본적으로 숨김 상태로 설정
+        commentField.setVisible(false);
+        commentField.setMaximumSize(new Dimension(getWidth() - 40, commentField.getPreferredSize().height));
         commentSection.add(commentField);
-        commentSection.add(Box.createVerticalStrut(10));
+        commentSection.add(Box.createVerticalStrut(10));  // 간격 추가
 
         // 댓글 목록
         JPanel commentsPanel = createCommentsPanel();
         commentsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         commentSection.add(commentsPanel);
 
-        // 댓글 영역에만 스크롤 적용
+        // 댓글 영역에 스크롤 적용
         JScrollPane scrollPane = new JScrollPane(commentSection);
         scrollPane.setBorder(null);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -144,39 +149,39 @@ public class TweetDetailPage extends JFrame {
         profilePanel.add(profileLabel);
         userPanel.add(profilePanel, BorderLayout.WEST);
 
+        // 오른쪽 패널 (사용자 정보와 트윗 내용을 포함)
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        rightPanel.setBackground(Color.WHITE);
+
         // 사용자 이름과 핸들
-        UserInfoLabel userInfoLabel = new UserInfoLabel(username, handle, timeStamp);
+        UserInfoLabel tweetUserInfo = new UserInfoLabel(username, handle, timeStamp);
         JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         userInfoPanel.setBackground(Color.WHITE);
-        userInfoPanel.add(userInfoLabel);
-        userPanel.add(userInfoPanel, BorderLayout.CENTER);
+        userInfoPanel.add(tweetUserInfo);
+        rightPanel.add(userInfoPanel);
 
         // 트윗 내용
         JPanel contentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         contentPanel.setBackground(Color.WHITE);
-        contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 0));
 
-        JLabel contentLabel = new JLabel("<html><body style='width: 350px'>" + tweetContent + "</body></html>");
-        contentLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+        JLabel contentLabel = new JLabel("<html><body style='width: 350px; margin-right: 20px; padding-right: 100px'>" + tweetContent + "</body></html>");        contentLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
         contentLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
         contentPanel.add(contentLabel);
+        rightPanel.add(contentPanel);
 
-
-        JLabel timeLabel = new JLabel(timeStamp);
-        timeLabel.setForeground(Color.GRAY);
-        timeLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        userPanel.add(rightPanel, BorderLayout.CENTER);
 
         // 상호작용 패널 (댓글, 좋아요)
         JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         statsPanel.setBackground(Color.WHITE);
         statsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-// 이 부분을 아래와 같이 수정
-        InteractionPanel interactionPanel = new InteractionPanel(this);
+        InteractionPanel interactionPanel = new InteractionPanel(this, true);  // true로 설정하여 메인 트윗에만 댓글 아이콘 표시
         interactionPanel.setCommentCount(String.valueOf(countComments()));
         interactionPanel.setLikeCount(likeCount);
 
-// 댓글 클릭 리스너 추가
         interactionPanel.addCommentClickListener(e -> {
             isCommentFieldVisible = !isCommentFieldVisible;
             commentField.setVisible(isCommentFieldVisible);
@@ -189,19 +194,11 @@ public class TweetDetailPage extends JFrame {
 
         // 컴포넌트 추가
         detailPanel.add(userPanel);
-        detailPanel.add(contentPanel);
         detailPanel.add(statsPanel);
 
         return detailPanel;
     }
-    // 댓글 입력창 토글 메소드 추가
-    private void toggleCommentField() {
-        isCommentFieldVisible = !isCommentFieldVisible;
-        commentField.setVisible(isCommentFieldVisible);
-        if (isCommentFieldVisible) {
-            commentField.requestFocus();
-        }
-    }
+
 
     // 댓글 수를 카운트하는 메소드 추가
     private int countComments() {
@@ -235,6 +232,7 @@ public class TweetDetailPage extends JFrame {
                 BorderFactory.createEmptyBorder(10, 0, 10, 0)
         ));
 
+
         // 프로필 이미지
         ProfileLabel profileLabel = new ProfileLabel(40, "src/main/java/org/example/asset/profileImage.png");
         JPanel profilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -242,12 +240,12 @@ public class TweetDetailPage extends JFrame {
         profilePanel.add(profileLabel);
         commentPanel.add(profilePanel, BorderLayout.WEST);
 
-        // 메인 컨텐츠 패널 (댓글 내용 + 대댓글)
+        // 메인 컨텐츠 패널
         JPanel mainContentPanel = new JPanel();
         mainContentPanel.setLayout(new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
         mainContentPanel.setBackground(Color.WHITE);
 
-        // 댓글 내용 패널
+        // 댓글 내용 패널 (기존 코드 유지)
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(Color.WHITE);
@@ -262,56 +260,89 @@ public class TweetDetailPage extends JFrame {
         // 댓글 텍스트
         JPanel textPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         textPanel.setBackground(Color.WHITE);
-        textPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));  // 왼쪽에 5픽셀 여백 추가
+        textPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
         JLabel commentText = new JLabel("<html><body style='width: 300px'>댓글 내용이 여기에 표시됩니다.</body></html>");
         textPanel.add(commentText);
         contentPanel.add(textPanel);
 
+
         // 상호작용 패널 (좋아요, 답글)
-        JPanel interactionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+        JPanel interactionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         interactionPanel.setBackground(Color.WHITE);
 
+
         // 좋아요 버튼
-        InteractionPanel likePanel = new InteractionPanel(this);
+        InteractionPanel likePanel = new InteractionPanel(this, true);
         interactionPanel.add(likePanel);
 
         // 답글 버튼
+        interactionPanel.add(Box.createHorizontalStrut(20));
         JButton replyButton = createReplyButton();
         interactionPanel.add(replyButton);
-
         contentPanel.add(interactionPanel);
 
-        // 대댓글 입력 필드 (기본적으로 숨김)
-        TweetField replyField = new TweetField();
-        replyField.setVisible(false);
-
-        // 대댓글 목록 패널
+        // 답글 목록 패널
         JPanel repliesPanel = new JPanel();
         repliesPanel.setLayout(new BoxLayout(repliesPanel, BoxLayout.Y_AXIS));
         repliesPanel.setBackground(Color.WHITE);
-        repliesPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));  // 왼쪽 여백으로 들여쓰기
-        repliesPanel.setVisible(false);  // 기본적으로 숨김
+
+        contentPanel.add(repliesPanel);
+
+
+
+
+
+        // 답글 입력창과 답글 목록을 포함할 패널
+        JPanel replyContainer = new JPanel();
+        replyContainer.setLayout(new BoxLayout(replyContainer, BoxLayout.Y_AXIS));
+        replyContainer.setBackground(Color.WHITE);
+        replyContainer.setBorder(BorderFactory.createEmptyBorder(0, -400, 0, 0));  // 왼쪽 여백
+
+
+        replyContainer.setVisible(false);  // 처음에는 숨김
+
+        // 대댓글 입력 필드
+        replyField = new TweetField();
+        replyField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        replyField.setMaximumSize(new Dimension(300, replyField.getPreferredSize().height));
+
+
+
+
+        // replyContainer에 컴포넌트 추가
+        replyContainer.add(repliesPanel);  // 답글 목록 추가
+        replyContainer.add(Box.createVerticalStrut(10));  // 간격 추가
+        replyContainer.add(replyField);  // 입력창 추가
+
+
 
         // 답글 버튼 클릭 이벤트
         replyButton.addActionListener(e -> {
-            replyField.setVisible(!replyField.isVisible());  // 토글
-            if (!repliesPanel.isVisible()) {
-                repliesPanel.setVisible(true);
-                // 대댓글 로드 (임시 데이터)
-                loadReplies(repliesPanel);
+            replyContainer.setVisible(!replyContainer.isVisible());
+            if (replyContainer.isVisible()) {
+                replyField.requestFocus();
+                // 답글이 없을 때만 새로운 답글 패널 추가
+                if (repliesPanel.getComponentCount() == 0) {
+                    JPanel replyPanel = createReplyPanel();
+                    repliesPanel.add(replyPanel);
+                    repliesPanel.add(Box.createVerticalStrut(1));
+                    repliesPanel.revalidate();
+                    repliesPanel.repaint();
+                }
             }
         });
 
         // 전체 구성
         mainContentPanel.add(contentPanel);
-        mainContentPanel.add(replyField);
-        mainContentPanel.add(repliesPanel);
+        mainContentPanel.add(replyContainer);
 
         commentPanel.add(mainContentPanel, BorderLayout.CENTER);
         return commentPanel;
     }
+
+
     private JButton createReplyButton() {
-        JButton replyButton = new JButton("답글");
+        JButton replyButton = new JButton("답글보기");
         replyButton.setBorderPainted(false);
         replyButton.setContentAreaFilled(false);
         replyButton.setFocusPainted(false);
@@ -320,18 +351,11 @@ public class TweetDetailPage extends JFrame {
         return replyButton;
     }
 
-    private void loadReplies(JPanel repliesPanel) {
-        // TODO: 데이터베이스에서 해당 댓글의 답글 목록을 가져와서 표시
-        // 현재는 테스트를 위해 한 개만 표시
-        JPanel replyPanel = createReplyPanel();
-        repliesPanel.add(replyPanel);
-        repliesPanel.add(Box.createVerticalStrut(1));
-    }
 
     private JPanel createReplyPanel() {
         JPanel replyPanel = new JPanel(new BorderLayout(10, 0));
         replyPanel.setBackground(Color.WHITE);
-        replyPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        replyPanel.setBorder(BorderFactory.createEmptyBorder(5, 400, 5, 0));
 
         // 프로필 이미지
         ProfileLabel profileLabel = new ProfileLabel(30, "src/main/java/org/example/asset/profileImage.png");
@@ -360,13 +384,8 @@ public class TweetDetailPage extends JFrame {
         textPanel.add(replyText);
         contentPanel.add(textPanel);
 
-        // 좋아요 버튼
-        JPanel interactionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        interactionPanel.setBackground(Color.WHITE);
-        interactionPanel.add(new InteractionPanel(this));
-        contentPanel.add(interactionPanel);
-
         replyPanel.add(contentPanel, BorderLayout.CENTER);
         return replyPanel;
     }
+
 }

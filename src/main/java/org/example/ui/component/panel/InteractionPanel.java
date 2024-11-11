@@ -12,28 +12,40 @@ public class InteractionPanel extends JPanel {
     private final JPanel commentPanel;
     private final JPanel heartPanel;
     private final JFrame parentFrame;
+    private final boolean showCommentIcon;  // 댓글 아이콘 표시 여부
     private ActionListener commentClickListener;
+    private boolean isLiked = false;  // 좋아요 상태 추적
 
+
+    // 기존 생성자
     public InteractionPanel(JFrame parentFrame) {
+        this(parentFrame, true);  // 기본적으로 댓글 아이콘 표시
+    }
+
+    // 새로운 생성자: 댓글 아이콘 표시 여부를 선택할 수 있음
+    public InteractionPanel(JFrame parentFrame, boolean showCommentIcon) {
         this.parentFrame = parentFrame;
+        this.showCommentIcon = showCommentIcon;
         this.commentPanel = new JPanel();
         this.heartPanel = new JPanel();
         initializePanel();
     }
 
     private void initializePanel() {
-        // 메인 패널 설정
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
         setBackground(Color.WHITE);
         setName("interactionPanel");
         setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
 
-        // 댓글 패널 설정
-        commentPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        commentPanel.setBackground(Color.WHITE);
-        commentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 75));
-        InteractionLabel commentLabel = new InteractionLabel("comment.png", "0", parentFrame);
-        commentPanel.add(commentLabel);
+        // 댓글 아이콘이 필요한 경우에만 추가
+        if (showCommentIcon) {
+            commentPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+            commentPanel.setBackground(Color.WHITE);
+            commentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 75));
+            InteractionLabel commentLabel = new InteractionLabel("comment.png", "0", parentFrame);
+            commentPanel.add(commentLabel);
+            add(commentPanel);
+        }
 
         // 하트 패널 설정
         heartPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
@@ -124,4 +136,6 @@ public class InteractionPanel extends JPanel {
     public void setCursorDefault() {
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
+
+
 }
