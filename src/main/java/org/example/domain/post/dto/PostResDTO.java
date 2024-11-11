@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class PostResDTO {
 
-    public record PostSummary(
+    public record Detail(
             Long id,
             String content,
             Long likeCount,
@@ -19,7 +19,7 @@ public class PostResDTO {
             String writer,
             Boolean isVerified
     ) {
-        public static PostSummary toPostSummary(ResultSet resultSet) throws SQLException {
+        public static Detail toDetail(ResultSet resultSet) throws SQLException {
             Long id = resultSet.getLong("id");
             String content = resultSet.getString("content");
             Long likeCount = resultSet.getLong("like_count");
@@ -29,7 +29,7 @@ public class PostResDTO {
             String profileImg = resultSet.getString("profile_image_url");
             Boolean isVerified = resultSet.getBoolean("is_verified");
 
-            return new PostSummary(id, content, likeCount, commentCount, createdAt, profileImg, writer, isVerified);
+            return new Detail(id, content, likeCount, commentCount, createdAt, profileImg, writer, isVerified);
         }
 
         private static String convertToString(Timestamp time) {

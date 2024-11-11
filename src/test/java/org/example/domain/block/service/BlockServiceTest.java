@@ -1,5 +1,8 @@
 package org.example.domain.block.service;
 
+import org.example.domain.block.dto.BlockReqDTO.Block;
+import org.example.domain.block.dto.BlockResDTO.BlockSummary;
+import org.example.domain.block.repository.BlockRepository;
 import org.example.domain.follow.dto.FollowReqDTO.Follow;
 import org.example.domain.follow.repository.FollowRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +37,7 @@ class BlockServiceTest {
         Block blockDto = new Block(9L, 10L);
         Follow follow = new Follow(blockDto.from(), blockDto.to());
 
-        when(followRepository.alreadyFollow(follow)).thenReturn(true);
+        when(followRepository.alreadyFollowed(follow)).thenReturn(true);
 
         blockService.block(blockDto);
     }
@@ -44,7 +47,7 @@ class BlockServiceTest {
         Block blockDto = new Block(9L, 10L);
         Follow follow = new Follow(blockDto.from(), blockDto.to());
 
-        when(followRepository.alreadyFollow(follow)).thenReturn(false);
+        when(followRepository.alreadyFollowed(follow)).thenReturn(false);
 
         blockService.block(blockDto);
     }
