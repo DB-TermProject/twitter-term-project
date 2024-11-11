@@ -1,6 +1,5 @@
 package org.example.domain.comment.service;
 
-import org.example.domain.comment.dto.CommentReqDTO;
 import org.example.domain.comment.dto.CommentReqDTO.Save;
 import org.example.domain.comment.dto.CommentReqDTO.Update;
 import org.example.domain.comment.repository.CommentRepository;
@@ -36,5 +35,9 @@ public class CommentService {
     public void delete(Long commentId, Long postId) {
         Long deletedComments = commentRepository.delete(commentId);
         postService.updateCommentCount(postId, -1 * deletedComments);
+    }
+
+    public void updateLikeCount(Long commentId, Long value) {
+        commentRepository.updateLikeCount(commentId, value);
     }
 }

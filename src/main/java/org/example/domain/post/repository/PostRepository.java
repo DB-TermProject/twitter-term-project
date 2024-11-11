@@ -142,4 +142,19 @@ public class PostRepository {
             throw new SqlExecutionException();
         }
     }
+
+    public void updateLikeCount(Long id, Long value) {
+        String sql = "UPDATE post SET like_count = like_count + ? WHERE id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, value);
+            statement.setLong(2, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
 }
