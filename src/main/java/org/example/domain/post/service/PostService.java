@@ -30,4 +30,8 @@ public class PostService {
     public void updateCommentCount(Long postId, Long value) {
         postRepository.updateCommentCount(postId, value);
     }
+
+    public void updateLikeCount(Long postId, Long value) {
+        postRepository.updateLikeCount(postId, value);
+    }
 }

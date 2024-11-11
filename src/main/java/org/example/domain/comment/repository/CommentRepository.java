@@ -1,6 +1,5 @@
 package org.example.domain.comment.repository;
 
-import org.example.domain.comment.dto.CommentReqDTO;
 import org.example.util.config.JdbcConfig;
 import org.example.util.exception.SqlExecutionException;
 
@@ -11,8 +10,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.example.domain.comment.dto.CommentReqDTO.*;
 import static org.example.domain.comment.dto.CommentReqDTO.Save;
+import static org.example.domain.comment.dto.CommentReqDTO.Update;
 import static org.example.domain.comment.dto.CommentResDTO.Detail;
 import static org.example.domain.comment.dto.CommentResDTO.Detail.toDetail;
 
@@ -156,6 +155,21 @@ public class CommentRepository {
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, dto.content());
+            statement.setLong(2, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
+
+    public void updateLikeCount(Long id, Long value) {
+        String sql = "UPDATE comment SET like_count = like_count + ? WHERE id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, value);
             statement.setLong(2, id);
 
             statement.executeUpdate();
