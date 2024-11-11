@@ -10,8 +10,14 @@ public class CommentLikeService implements LikeService {
     private final CommentService commentService = new CommentService();
 
     @Override
-    public void save(Long userId, Long commentId) {
+    public void like(Long userId, Long commentId) {
         likeRepository.save(userId, commentId);
         commentService.updateLikeCount(commentId, 1L);
+    }
+
+    @Override
+    public void unlike(Long userId, Long commentId) {
+        likeRepository.delete(userId, commentId);
+        commentService.updateLikeCount(commentId, -1L);
     }
 }

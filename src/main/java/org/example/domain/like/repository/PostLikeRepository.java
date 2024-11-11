@@ -24,4 +24,20 @@ public class PostLikeRepository implements LikeRepository {
             throw new SqlExecutionException();
         }
     }
+
+    @Override
+    public void delete(Long userId, Long postId) {
+        String sql = "DELETE FROM post_like WHERE liker_id = ? AND post_id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, userId);
+            statement.setLong(2, postId);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
 }

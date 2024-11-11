@@ -24,4 +24,20 @@ public class CommentLikeRepository implements LikeRepository {
             throw new SqlExecutionException();
         }
     }
+
+    @Override
+    public void delete(Long userId, Long commentId) {
+        String sql = "DELETE FROM comment_like WHERE liker_id = ? AND comment_id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, userId);
+            statement.setLong(2, commentId);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
 }
