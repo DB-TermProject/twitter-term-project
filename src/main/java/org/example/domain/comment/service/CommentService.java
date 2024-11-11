@@ -1,6 +1,8 @@
 package org.example.domain.comment.service;
 
+import org.example.domain.comment.dto.CommentReqDTO;
 import org.example.domain.comment.dto.CommentReqDTO.Save;
+import org.example.domain.comment.dto.CommentReqDTO.Update;
 import org.example.domain.comment.repository.CommentRepository;
 import org.example.domain.post.service.PostService;
 
@@ -23,8 +25,12 @@ public class CommentService {
         postService.updateCommentCount(dto.postId(), 1L);
     }
 
-    public List<Detail> findComments(Long postId) {
+    public List<Detail> read(Long postId) {
         return commentRepository.findComments(postId);
+    }
+
+    public void update(Long commentId, Update dto) {
+        commentRepository.updateComment(commentId, dto);
     }
 
     public void delete(Long commentId, Long postId) {

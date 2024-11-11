@@ -1,5 +1,6 @@
 package org.example.domain.comment.repository;
 
+import org.example.domain.comment.dto.CommentReqDTO;
 import org.example.util.config.JdbcConfig;
 import org.example.util.exception.SqlExecutionException;
 
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.domain.comment.dto.CommentReqDTO.*;
 import static org.example.domain.comment.dto.CommentReqDTO.Save;
 import static org.example.domain.comment.dto.CommentResDTO.Detail;
 import static org.example.domain.comment.dto.CommentResDTO.Detail.toDetail;
@@ -147,4 +149,18 @@ public class CommentRepository {
         return deletedCount;
     }
 
+    public void updateComment(Long id, Update dto) {
+        String sql = "UPDATE comment SET content = ? WHERE id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, dto.content());
+            statement.setLong(2, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
 }
