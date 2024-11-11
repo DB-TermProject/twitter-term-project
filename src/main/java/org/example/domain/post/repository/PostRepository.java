@@ -127,4 +127,19 @@ public class PostRepository {
             throw new SqlExecutionException();
         }
     }
+
+    public void updateCommentCount(Long id, Long value) {
+        String sql = "UPDATE post SET comment_count = post.comment_count + ? WHERE id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, value);
+            statement.setLong(2, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
 }

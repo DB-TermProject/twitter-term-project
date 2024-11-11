@@ -117,4 +117,34 @@ public class CommentRepository {
             throw new SqlExecutionException();
         }
     }
+
+    public Long delete(Long id) {
+        String countSql = "SELECT COUNT(*) FROM comment WHERE parent_comment_id = ? OR id = ?";
+        String deleteSql = "DELETE FROM comment WHERE id = ?";
+
+        long deletedCount = 0L;
+
+        try (Connection connection = JdbcConfig.getConnection()) {
+            try (PreparedStatement countStatement = connection.prepareStatement(countSql)) {
+                countStatement.setLong(1, id);
+                countStatement.setLong(2, id);
+
+                try (ResultSet rs = countStatement.executeQuery()) {
+                    if (rs.next()) {
+                        deletedCount = rs.getLong(1);
+                    }
+                }
+            }
+
+            try (PreparedStatement deleteStatement = connection.prepareStatement(deleteSql)) {
+                deleteStatement.setLong(1, id);
+                deleteStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+
+        return deletedCount;
+    }
+
 }

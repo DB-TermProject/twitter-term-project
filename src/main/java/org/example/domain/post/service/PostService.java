@@ -26,4 +26,8 @@ public class PostService {
     public Detail findPost(Long postId) {
         return postRepository.findPost(postId);
     }
+
+    public void updateCommentCount(Long postId, Long value) {
+        postRepository.updateCommentCount(postId, value);
+    }
 }
