@@ -27,29 +27,29 @@ class CommentServiceTest {
     }
 
     @Test
-    void save_parentComment() {
+    void 댓글_작성() {
         // given
-        Long userId = 12L;
-        CommentReqDTO.Save parentCommentDTO = new CommentReqDTO.Save("Parent comment", 2L, null);
+        Long userId = 1L;
+        CommentReqDTO.Save parentCommentDTO = new CommentReqDTO.Save("Parent comment", 1L, null);
 
         // when
         commentService.save(userId, parentCommentDTO);
     }
 
     @Test
-    void save_childComment() {
+    void 대댓글_작성() {
         // given
-        Long userId = 12L;
-        CommentReqDTO.Save childCommentDTO = new CommentReqDTO.Save("Child comment", 2L, 3L);
+        Long userId = 1L;
+        CommentReqDTO.Save childCommentDTO = new CommentReqDTO.Save("Child comment", 1L, 4L);
 
         // when
         commentService.save(userId, childCommentDTO);
     }
 
     @Test
-    void findComments_withNestedReplies() {
+    void 댓글_조회() {
         // given
-        Long postId = 2L;
+        Long postId = 1L;
         CommentResDTO.Detail parentComment = new CommentResDTO.Detail(
                 1L, "Parent comment", 10L, "1시간 전", "profileImg1", "User1", true, List.of()
         );
@@ -65,5 +65,12 @@ class CommentServiceTest {
         List<CommentResDTO.Detail> comments = commentService.findComments(postId);
 
         comments.listIterator().forEachRemaining(System.out::println);
+    }
+
+    @Test
+    void 댓글_삭제() {
+        Long commentId = 4L;
+        Long postId = 1L;
+        commentService.delete(commentId, postId);
     }
 }
