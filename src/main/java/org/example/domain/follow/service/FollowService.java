@@ -38,9 +38,10 @@ public class FollowService {
         return followRepository.alreadyFollowed(dto);
     }
 
-    public void accept(Follow dto) {
+    public void accept(Follow dto) {    // from: 팔로우 보낸 유저, to: 팔로우 받은 유저
         dto.validate();
         followRepository.accept(dto);
+        noticeService.notice(dto.from(), ACCEPTED_FOLLOW_REQUEST.getMessage(userService.findName(dto.to())));
     }
 
     public List<FollowSummary> findFollowers(Long id) {
