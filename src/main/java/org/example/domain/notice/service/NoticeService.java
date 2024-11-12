@@ -1,6 +1,9 @@
 package org.example.domain.notice.service;
 
+import org.example.domain.notice.dto.NoticeResDTO.Detail;
 import org.example.domain.notice.repository.NoticeRepository;
+
+import java.util.List;
 
 public class NoticeService {
 
@@ -10,5 +13,7 @@ public class NoticeService {
         noticeRepository.save(userId, message);
     }
 
-    // read
+    public List<Detail> read(Long userId) {
+        return noticeRepository.read(userId);
+    }
 }
