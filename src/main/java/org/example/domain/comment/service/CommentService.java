@@ -33,7 +33,7 @@ public class CommentService {
         postService.updateCommentCount(dto.postId(), 1L);
     }
 
-    private Long findWriter(Long commentId) {
+    public Long findWriter(Long commentId) {
         return commentRepository.findWriter(commentId);
     }
 
