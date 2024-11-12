@@ -157,4 +157,21 @@ public class PostRepository {
             throw new SqlExecutionException();
         }
     }
+
+    public Long findWriter(Long postId) {
+        String sql = "SELECT writer_id FROM post WHERE id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, postId);
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+                return resultSet.getLong("writer_id");
+            throw new SqlExecutionException();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
 }

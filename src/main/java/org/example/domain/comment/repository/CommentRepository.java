@@ -177,4 +177,22 @@ public class CommentRepository {
             throw new SqlExecutionException();
         }
     }
+
+    public Long findWriter(Long commentId) {
+        String sql = "SELECT writer_id FROM comment WHERE id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, commentId);
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+                return resultSet.getLong("writer_id");
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SqlExecutionException();
+        }
+    }
 }
