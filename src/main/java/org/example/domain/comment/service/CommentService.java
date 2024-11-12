@@ -3,25 +3,38 @@ package org.example.domain.comment.service;
 import org.example.domain.comment.dto.CommentReqDTO.Save;
 import org.example.domain.comment.dto.CommentReqDTO.Update;
 import org.example.domain.comment.repository.CommentRepository;
+import org.example.domain.notice.service.NoticeService;
 import org.example.domain.post.service.PostService;
+import org.example.domain.user.service.UserService;
 
 import java.util.List;
 
 import static org.example.domain.comment.dto.CommentResDTO.Detail;
+import static org.example.domain.notice.enums.NoticeMessage.COMMENT_ON_COMMENT;
+import static org.example.domain.notice.enums.NoticeMessage.COMMENT_ON_POST;
 
 public class CommentService {
 
     private final CommentRepository commentRepository = new CommentRepository();
     private final PostService postService = new PostService();
+    private final NoticeService noticeService = new NoticeService();
+    private final UserService userService = new UserService();
 
     public void save(Long userId, Save dto) {
         if(dto.parentCommentId() == null) {
             commentRepository.save(userId, dto.content(), dto.postId());
+            noticeService.notice(postService.findWriter(dto.postId()), COMMENT_ON_POST.getMessage(userService.findName(userId)));
         } else {
             commentRepository.save(userId, dto);
+            if(!userId.equals(findWriter(dto.parentCommentId())))
+                noticeService.notice(findWriter(dto.parentCommentId()), COMMENT_ON_COMMENT.getMessage(userService.findName(userId)));
         }
 
         postService.updateCommentCount(dto.postId(), 1L);
+    }
+
+    public Long findWriter(Long commentId) {
+        return commentRepository.findWriter(commentId);
     }
 
     public List<Detail> read(Long postId) {

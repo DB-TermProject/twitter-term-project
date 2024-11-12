@@ -34,4 +34,8 @@ public class PostService {
     public void updateLikeCount(Long postId, Long value) {
         postRepository.updateLikeCount(postId, value);
     }
+
+    public Long findWriter(Long postId) {
+        return postRepository.findWriter(postId);
+    }
 }

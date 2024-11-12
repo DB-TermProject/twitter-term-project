@@ -52,8 +52,16 @@ public class UserRepository {
         try (Connection connection = JdbcConfig.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            return statement.executeQuery().getBoolean("is_public");
+
+            boolean isPublic = false;
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next())
+                isPublic = resultSet.getBoolean("is_public");
+
+            return isPublic;
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }
@@ -132,6 +140,23 @@ public class UserRepository {
             statement.setLong(2, id);
 
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
+
+    public String findName(Long id) {
+        String sql = "SELECT name FROM user WHERE id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+            if(resultSet.next())
+                return resultSet.getString("name");
+            throw new SqlExecutionException();
         } catch (SQLException e) {
             throw new SqlExecutionException();
         }
