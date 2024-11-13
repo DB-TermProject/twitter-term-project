@@ -12,7 +12,7 @@ public class TweetField extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(1, 0, 1, 0, Color.LIGHT_GRAY),
+                BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY),
                 new EmptyBorder(10, 20, 10, 20)
         ));
 
@@ -59,7 +59,7 @@ public class TweetField extends JPanel {
             }
         });
 
-        // 하단 패널 (글자 수 표시 및 버튼)
+        // 하단 패널 수정
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBackground(Color.WHITE);
         bottomPanel.setBorder(new EmptyBorder(5, 0, 0, 0));
@@ -69,28 +69,23 @@ public class TweetField extends JPanel {
         countLabel.setForeground(Color.GRAY);
         bottomPanel.add(countLabel, BorderLayout.WEST);
 
-        // 댓글 작성 버튼
-        JButton replyButton = new JButton("댓글");
-        replyButton.setBackground(new Color(29, 155, 240));  // 트위터 파란색
-        replyButton.setForeground(Color.WHITE);
-        replyButton.setFocusPainted(false);
-        replyButton.setBorderPainted(false);
-        replyButton.setPreferredSize(new Dimension(70, 30));
-        replyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // 전송 버튼 추가 (오른쪽 끝에 배치)
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        rightPanel.setBackground(Color.WHITE);
 
-        // 버튼 클릭 이벤트
-        replyButton.addActionListener(e -> {
-            String text = textArea.getText();
-            if (!text.equals("댓글을 입력하세요...") && !text.isEmpty()) {
-                // TODO: 댓글 저장 로직 구현
-                System.out.println("댓글 작성: " + text);
-                textArea.setText("댓글을 입력하세요...");
-                textArea.setForeground(Color.GRAY);
-                countLabel.setText("0/" + maxLength);
-            }
-        });
+        // 전송 버튼
+        JButton sendButton = new JButton();
+        ImageIcon originalIcon = new ImageIcon("src/main/java/org/example/asset/send.png");
+        Image scaledImage = originalIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        sendButton.setIcon(new ImageIcon(scaledImage));
+        sendButton.setPreferredSize(new Dimension(30, 30));
+        sendButton.setBorderPainted(false);
+        sendButton.setContentAreaFilled(false);
+        sendButton.setFocusPainted(false);
+        sendButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        bottomPanel.add(replyButton, BorderLayout.EAST);
+        rightPanel.add(sendButton);
+        bottomPanel.add(rightPanel, BorderLayout.EAST);
 
         // 컴포넌트 추가
         add(new JScrollPane(textArea), BorderLayout.CENTER);

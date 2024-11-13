@@ -3,6 +3,7 @@ package org.example;
 import org.example.ui.page.HomeFeedPage;
 import org.example.ui.page.LoginPage;
 import org.example.util.config.JdbcConfig;
+import org.example.ui.page.NewTweetPage;
 
 import javax.swing.*;
 import java.sql.Connection;

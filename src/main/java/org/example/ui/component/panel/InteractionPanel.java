@@ -41,7 +41,7 @@ public class InteractionPanel extends JPanel {
         if (showCommentIcon) {
             commentPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
             commentPanel.setBackground(Color.WHITE);
-            commentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 75));
+            commentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));  // 간격 조정
             InteractionLabel commentLabel = new InteractionLabel("comment.png", "0", parentFrame);
             commentPanel.add(commentLabel);
             add(commentPanel);
@@ -50,12 +50,12 @@ public class InteractionPanel extends JPanel {
         // 하트 패널 설정
         heartPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
         heartPanel.setBackground(Color.WHITE);
-        heartPanel.add(new InteractionLabel("heart.png", "0", parentFrame));
-
-        // 패널들을 메인 패널에 추가
-        add(commentPanel);
+        InteractionLabel heartLabel = new InteractionLabel("heart.png", "0", parentFrame);
+        heartPanel.add(heartLabel);
         add(heartPanel);
     }
+
+
 
     public void setCommentCount(String count) {
         updateCount(commentPanel, count);
