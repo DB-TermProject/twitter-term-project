@@ -1,6 +1,7 @@
 package org.example.ui.component.panel;
 
 import org.example.ui.component.button.RoundButton2;
+import org.example.ui.component.label.ProfileLabel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -80,13 +81,12 @@ public class MyPageMainPanel extends JPanel {
 
         // 일곱 번째 줄: 표와 버튼
         gbc.gridy++;
-
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(Color.WHITE);
 
-        // 상단 버튼 부분 (tweet, comment, likes)
+// 상단 버튼 부분 (tweet, comment, likes)
         JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
         buttonPanel.setPreferredSize(new Dimension(0, 70));
         buttonPanel.setBackground(Color.WHITE);
@@ -139,12 +139,87 @@ public class MyPageMainPanel extends JPanel {
 
         tablePanel.add(buttonPanel, BorderLayout.NORTH);
 
-        // 나머지 빈 공백 부분
-        JPanel emptySpace = new JPanel();
-        emptySpace.setBackground(Color.LIGHT_GRAY);
-        tablePanel.add(emptySpace, BorderLayout.CENTER);
+// 피드를 표시할 패널 (기존 emptySpace 대신)
+        JPanel feedPanel = new JPanel();
+        feedPanel.setLayout(new BoxLayout(feedPanel, BoxLayout.Y_AXIS));
+        feedPanel.setBackground(Color.WHITE);
 
+// 피드 아이템들 추가
+        for (int i = 0; i < 5; i++) {  // 예시로 5개의 피드 추가
+            feedPanel.add(createFeedItem());
+            feedPanel.add(Box.createVerticalStrut(5));  // 구분선 용도의 간격
+        }
+
+// 스크롤 패널에 피드 패널 추가
+        JScrollPane scrollPane = new JScrollPane(feedPanel);
+        scrollPane.setBorder(null);
+        scrollPane.setBackground(Color.WHITE);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
         add(tablePanel, gbc);
+    }
+    private JPanel createFeedItem() {
+        JPanel feedItem = new JPanel(new BorderLayout(10, 0));
+        feedItem.setBackground(Color.WHITE);
+        // 상하 패딩을 15px로 증가
+        feedItem.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)  // 상하 패딩 증가
+        ));
+
+        // 프로필 이미지 크기 증가
+        ProfileLabel profileLabel = new ProfileLabel(40, "src/main/java/org/example/asset/profileImage.png"); // 40px로 증가
+        JPanel profilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        profilePanel.setBackground(Color.WHITE);
+        profilePanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0)); // 상단 여백 추가
+        profilePanel.add(profileLabel);
+        feedItem.add(profilePanel, BorderLayout.WEST);
+
+        // 컨텐츠 패널
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(Color.WHITE);
+
+        // 사용자 정보 패널
+        JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        userInfoPanel.setBackground(Color.WHITE);
+        userInfoPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); // 상하 여백 추가
+
+        JLabel nameLabel = new JLabel("Trump");
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 15));  // 폰트 크기 증가
+
+        JLabel handleLabel = new JLabel("@realDonaldTrump");
+        handleLabel.setForeground(Color.GRAY);
+        handleLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JLabel timeLabel = new JLabel(" · 2h");
+        timeLabel.setForeground(Color.GRAY);
+        timeLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        userInfoPanel.add(nameLabel);
+        userInfoPanel.add(handleLabel);
+        userInfoPanel.add(timeLabel);
+        contentPanel.add(userInfoPanel);
+
+        // 트윗 내용
+        JPanel tweetPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        tweetPanel.setBackground(Color.WHITE);
+        tweetPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // 하단 여백 추가
+        JLabel tweetText = new JLabel("Make America Great Again!");
+        tweetText.setFont(new Font("Arial", Font.PLAIN, 15));  // 폰트 크기 증가
+        tweetPanel.add(tweetText);
+        contentPanel.add(tweetPanel);
+
+
+        // 상호작용 패널
+        InteractionPanel interactionPanel = new InteractionPanel((JFrame) SwingUtilities.getWindowAncestor(this));
+        interactionPanel.setCommentCount("5");
+        interactionPanel.setLikeCount("10");
+        contentPanel.add(interactionPanel);
+
+        feedItem.add(contentPanel, BorderLayout.CENTER);
+        return feedItem;
     }
 }
 

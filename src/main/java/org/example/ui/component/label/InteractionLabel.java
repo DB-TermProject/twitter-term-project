@@ -55,10 +55,19 @@ public class InteractionLabel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (!isLiked[0]) {
+                    // 좋아요를 누를 때
                     int currentCount = Integer.parseInt(countLabel.getText());
                     countLabel.setText(String.valueOf(currentCount + 1));
                     countLabel.setForeground(new Color(249, 24, 128));  // 좋아요 색상
                     isLiked[0] = true;
+                } else {
+                    // 좋아요를 취소할 때
+                    int currentCount = Integer.parseInt(countLabel.getText());
+                    if (currentCount > 0) {
+                        countLabel.setText(String.valueOf(currentCount - 1));
+                        countLabel.setForeground(Color.GRAY);  // 원래 색상으로 복귀
+                        isLiked[0] = false;
+                    }
                 }
             }
 
@@ -114,4 +123,5 @@ public class InteractionLabel extends JPanel {
     public void setCount(String count) {
         countLabel.setText(count);
     }
+
 }

@@ -94,7 +94,7 @@ public class TweetPanel extends JPanel {
                             connection,
                             "사용자 이름",
                             "@handle",
-                            "트윗 내용...",
+                            "가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사",
                             "src/main/java/org/example/asset/profileImage.png",
                             "2h",
                             "0",
