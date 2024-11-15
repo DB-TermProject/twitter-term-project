@@ -132,11 +132,11 @@ public class PostRepository {
         try (Connection connection = JdbcConfig.getConnection()) {
             connection.setAutoCommit(false);
 
-            try (PreparedStatement selectStatement = connection.prepareStatement(lockSql);
+            try (PreparedStatement lockStatement = connection.prepareStatement(lockSql);
                  PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
 
-                selectStatement.setLong(1, id);
-                selectStatement.executeQuery();
+                lockStatement.setLong(1, id);
+                lockStatement.executeQuery();
 
                 updateStatement.setLong(1, value);
                 updateStatement.setLong(2, id);
@@ -160,11 +160,11 @@ public class PostRepository {
         try (Connection connection = JdbcConfig.getConnection()) {
             connection.setAutoCommit(false);
 
-            try (PreparedStatement selectStatement = connection.prepareStatement(lockSql);
+            try (PreparedStatement lockStatement = connection.prepareStatement(lockSql);
                  PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
 
-                selectStatement.setLong(1, id);
-                selectStatement.executeQuery();
+                lockStatement.setLong(1, id);
+                lockStatement.executeQuery();
 
                 updateStatement.setLong(1, value);
                 updateStatement.setLong(2, id);
