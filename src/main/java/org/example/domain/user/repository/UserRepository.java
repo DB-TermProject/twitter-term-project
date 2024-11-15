@@ -1,6 +1,5 @@
 package org.example.domain.user.repository;
 
-import org.example.domain.comment.dto.CommentResDTO;
 import org.example.domain.user.dto.UserReqDTO.Profile;
 import org.example.domain.user.dto.UserReqDTO.SignUp;
 import org.example.domain.user.dto.UserResDTO;
@@ -11,11 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-
-import static org.example.domain.comment.dto.CommentResDTO.Detail.toDetail;
 
 public class UserRepository {
 
@@ -122,34 +117,60 @@ public class UserRepository {
     }
 
     public void updateFollowingCount(Long id, Long value) {
-        String sql = "UPDATE user SET following_count = following_count + ? WHERE id = ?";
+        String selectSql = "SELECT following_count FROM user WHERE id = ? FOR UPDATE";
+        String updateSql = "UPDATE user SET following_count = following_count + ? WHERE id = ?";
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = JdbcConfig.getConnection()) {
+            connection.setAutoCommit(false);
 
-            statement.setLong(1, value);
-            statement.setLong(2, id);
+            try (PreparedStatement selectStatement = connection.prepareStatement(selectSql);
+                 PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
 
-            statement.executeUpdate();
+                selectStatement.setLong(1, id);
+                selectStatement.executeQuery();
+
+                updateStatement.setLong(1, value);
+                updateStatement.setLong(2, id);
+                updateStatement.executeUpdate();
+
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
         } catch (SQLException e) {
             throw new SqlExecutionException();
         }
     }
+
 
     public void updateFollowerCount(Long id, long value) {
-        String sql = "UPDATE user SET followers_count = followers_count + ? WHERE id = ?";
+        String selectSql = "SELECT followers_count FROM user WHERE id = ? FOR UPDATE";
+        String updateSql = "UPDATE user SET followers_count = followers_count + ? WHERE id = ?";
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = JdbcConfig.getConnection()) {
+            connection.setAutoCommit(false);    // Start Transaction
 
-            statement.setLong(1, value);
-            statement.setLong(2, id);
+            try (PreparedStatement selectStatement = connection.prepareStatement(selectSql);
+                 PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
 
-            statement.executeUpdate();
+                selectStatement.setLong(1, id);
+                selectStatement.executeQuery();
+
+                updateStatement.setLong(1, value);
+                updateStatement.setLong(2, id);
+                updateStatement.executeUpdate();
+
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
         } catch (SQLException e) {
             throw new SqlExecutionException();
         }
     }
+
 
     public String findName(Long id) {
         String sql = "SELECT name FROM user WHERE id = ?";
