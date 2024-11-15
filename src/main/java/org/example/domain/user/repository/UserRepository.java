@@ -1,7 +1,9 @@
 package org.example.domain.user.repository;
 
+import org.example.domain.comment.dto.CommentResDTO;
 import org.example.domain.user.dto.UserReqDTO.Profile;
 import org.example.domain.user.dto.UserReqDTO.SignUp;
+import org.example.domain.user.dto.UserResDTO;
 import org.example.util.config.JdbcConfig;
 import org.example.util.exception.SqlExecutionException;
 
@@ -9,7 +11,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static org.example.domain.comment.dto.CommentResDTO.Detail.toDetail;
 
 public class UserRepository {
 
@@ -158,6 +164,28 @@ public class UserRepository {
                 return resultSet.getString("name");
             throw new SqlExecutionException();
         } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
+
+    public UserResDTO.Profile findById(Long id) {
+        String sql = """
+            SELECT u.id, u.email, u.name, u.info, u.profile_image_url, u.organization, u.is_verified, u.is_public, u.followers_count, u.following_count
+            FROM user u
+            WHERE u.id = ?
+        """;
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next())
+                return UserResDTO.Profile.toProfile(resultSet);
+            throw new SQLException();
+        } catch (SQLException e) {
+            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }
