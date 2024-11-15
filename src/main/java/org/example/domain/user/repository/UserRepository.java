@@ -62,7 +62,6 @@ public class UserRepository {
 
             return isPublic;
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }
@@ -117,13 +116,13 @@ public class UserRepository {
     }
 
     public void updateFollowingCount(Long id, Long value) {
-        String selectSql = "SELECT following_count FROM user WHERE id = ? FOR UPDATE";
+        String lockSql = "SELECT following_count FROM user WHERE id = ? FOR UPDATE";
         String updateSql = "UPDATE user SET following_count = following_count + ? WHERE id = ?";
 
         try (Connection connection = JdbcConfig.getConnection()) {
             connection.setAutoCommit(false);
 
-            try (PreparedStatement selectStatement = connection.prepareStatement(selectSql);
+            try (PreparedStatement selectStatement = connection.prepareStatement(lockSql);
                  PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
 
                 selectStatement.setLong(1, id);
@@ -145,13 +144,13 @@ public class UserRepository {
 
 
     public void updateFollowerCount(Long id, long value) {
-        String selectSql = "SELECT followers_count FROM user WHERE id = ? FOR UPDATE";
+        String lockSql = "SELECT followers_count FROM user WHERE id = ? FOR UPDATE";
         String updateSql = "UPDATE user SET followers_count = followers_count + ? WHERE id = ?";
 
         try (Connection connection = JdbcConfig.getConnection()) {
             connection.setAutoCommit(false);    // Start Transaction
 
-            try (PreparedStatement selectStatement = connection.prepareStatement(selectSql);
+            try (PreparedStatement selectStatement = connection.prepareStatement(lockSql);
                  PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
 
                 selectStatement.setLong(1, id);
@@ -206,7 +205,6 @@ public class UserRepository {
                 return UserResDTO.Profile.toProfile(resultSet);
             throw new SQLException();
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }
