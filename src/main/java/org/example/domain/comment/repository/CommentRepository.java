@@ -164,19 +164,32 @@ public class CommentRepository {
     }
 
     public void updateLikeCount(Long id, Long value) {
-        String sql = "UPDATE comment SET like_count = like_count + ? WHERE id = ?";
+        String lockSql = "SELECT like_count FROM comment WHERE id = ? FOR UPDATE";
+        String updateSql = "UPDATE comment SET like_count = like_count + ? WHERE id = ?";
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = JdbcConfig.getConnection()) {
+            connection.setAutoCommit(false);
 
-            statement.setLong(1, value);
-            statement.setLong(2, id);
+            try (PreparedStatement lockStatement = connection.prepareStatement(lockSql);
+                 PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
 
-            statement.executeUpdate();
+                lockStatement.setLong(1, id);
+                lockStatement.executeQuery();
+
+                updateStatement.setLong(1, value);
+                updateStatement.setLong(2, id);
+                updateStatement.executeUpdate();
+
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
         } catch (SQLException e) {
             throw new SqlExecutionException();
         }
     }
+
 
     public Long findWriter(Long commentId) {
         String sql = "SELECT writer_id FROM comment WHERE id = ?";
@@ -191,7 +204,6 @@ public class CommentRepository {
                 return resultSet.getLong("writer_id");
             return null;
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }

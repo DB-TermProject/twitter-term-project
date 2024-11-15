@@ -62,7 +62,6 @@ public class PostRepository {
 
             return feed;
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }
@@ -96,7 +95,6 @@ public class PostRepository {
 
             return feed;
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }
@@ -123,40 +121,65 @@ public class PostRepository {
 
             return toDetail(statement.executeQuery());
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }
 
     public void updateCommentCount(Long id, Long value) {
-        String sql = "UPDATE post SET comment_count = post.comment_count + ? WHERE id = ?";
+        String lockSql = "SELECT comment_count FROM post WHERE id = ? FOR UPDATE";
+        String updateSql = "UPDATE post SET comment_count = comment_count + ? WHERE id = ?";
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = JdbcConfig.getConnection()) {
+            connection.setAutoCommit(false);
 
-            statement.setLong(1, value);
-            statement.setLong(2, id);
+            try (PreparedStatement lockStatement = connection.prepareStatement(lockSql);
+                 PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
 
-            statement.executeUpdate();
+                lockStatement.setLong(1, id);
+                lockStatement.executeQuery();
+
+                updateStatement.setLong(1, value);
+                updateStatement.setLong(2, id);
+                updateStatement.executeUpdate();
+
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
         } catch (SQLException e) {
             throw new SqlExecutionException();
         }
     }
+
 
     public void updateLikeCount(Long id, Long value) {
-        String sql = "UPDATE post SET like_count = like_count + ? WHERE id = ?";
+        String lockSql = "SELECT like_count FROM post WHERE id = ? FOR UPDATE";
+        String updateSql = "UPDATE post SET like_count = like_count + ? WHERE id = ?";
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = JdbcConfig.getConnection()) {
+            connection.setAutoCommit(false);
 
-            statement.setLong(1, value);
-            statement.setLong(2, id);
+            try (PreparedStatement lockStatement = connection.prepareStatement(lockSql);
+                 PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
 
-            statement.executeUpdate();
+                lockStatement.setLong(1, id);
+                lockStatement.executeQuery();
+
+                updateStatement.setLong(1, value);
+                updateStatement.setLong(2, id);
+                updateStatement.executeUpdate();
+
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
         } catch (SQLException e) {
             throw new SqlExecutionException();
         }
     }
+
 
     public Long findWriter(Long postId) {
         String sql = "SELECT writer_id FROM post WHERE id = ?";
