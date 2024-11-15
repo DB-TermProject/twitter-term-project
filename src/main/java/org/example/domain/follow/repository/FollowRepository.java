@@ -16,17 +16,19 @@ import static org.example.domain.follow.dto.FollowResDTO.FollowSummary.toFollowS
 
 public class FollowRepository {
 
-    public void follow(Follow dto) {
-        String sql = "INSERT INTO follow (follower_id, following_id) VALUES (?, ?)";
+    public void follow(Follow dto, String status) {
+        String sql = "INSERT INTO follow (follower_id, following_id, status) values (?, ?, ?)";
 
         try (Connection connection = JdbcConfig.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setLong(1, dto.from());
             statement.setLong(2, dto.to());
+            statement.setString(3, status);
 
             statement.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }
@@ -46,14 +48,15 @@ public class FollowRepository {
         }
     }
 
-    public List<FollowSummary> findFollowers(Long id) {
+    public List<FollowSummary> findFollowers(Long id, String status) {
         String sql = "SELECT u.id, u.name, u.organization, u.profile_image_url, u.is_verified " +
-                "FROM follow f JOIN user u ON f.follower_id = u.id WHERE following_id = ?";
+                "FROM follow f JOIN user u ON f.follower_id = u.id WHERE following_id = ? AND f.status = ?";
 
         try (Connection connection = JdbcConfig.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setLong(1, id);
+            statement.setString(2, status);
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -68,14 +71,15 @@ public class FollowRepository {
         }
     }
 
-    public List<FollowSummary> findFollowings(Long id) {
+    public List<FollowSummary> findFollowings(Long id, String status) {
         String sql = "SELECT u.id, u.name, u.organization, u.profile_image_url, u.is_verified " +
-                "FROM follow f JOIN user u ON f.following_id = u.id WHERE follower_id = ?";
+                "FROM follow f JOIN user u ON f.following_id = u.id WHERE follower_id = ? AND f.status = ?";
 
         try (Connection connection = JdbcConfig.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setLong(1, id);
+            statement.setString(2, status);
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -85,6 +89,36 @@ public class FollowRepository {
             }
 
             return followings;
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
+
+    public void accept(Follow dto) {    // 테스트 대기 중
+        String sql = "UPDATE follow SET status = 'ACCEPTED' WHERE following_id = ? AND follower_id = ?";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, dto.to());
+            statement.setLong(2, dto.from());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SqlExecutionException();
+        }
+    }
+
+    public boolean alreadyFollowed(Follow follow) {
+        String sql = "SELECT 1 FROM follow WHERE follower_id = ? AND following_id = ? LIMIT 1";
+
+        try (Connection connection = JdbcConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, follow.from());
+            statement.setLong(2, follow.to());
+
+            return statement.executeQuery().next();
         } catch (SQLException e) {
             throw new SqlExecutionException();
         }

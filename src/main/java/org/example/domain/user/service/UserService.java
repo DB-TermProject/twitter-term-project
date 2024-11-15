@@ -1,6 +1,5 @@
 package org.example.domain.user.service;
 
-
 import org.example.domain.user.dto.UserReqDTO.Login;
 import org.example.domain.user.dto.UserReqDTO.SignUp;
 import org.example.domain.user.dto.UserResDTO.LoginResponse;
@@ -25,21 +24,39 @@ public class UserService {
     }
 
     public void signUp(SignUp dto) {
+        dto.validate();
+
         if (userRepository.existsByEmail(dto.email()))
             throw new UserExistsException();
 
         userRepository.save(dto);   // 회원가입 후 로그인 페이지로 리다이렉트
     }
 
-    public ProfileResponse updateProfile(Long id, Profile dto) {
-        userRepository.updateProfile(id, dto);
+    public ProfileResponse updateProfile(Long userId, Profile dto) {
+        dto.validate();
+        userRepository.updateProfile(userId, dto);
         return new ProfileResponse(dto.info(), dto.profile_image_url(), dto.organization(), dto.is_public());
     }
 
-    public void updatePassword(Long id, Password dto) {
-        if(!dto.newPassword().equals(dto.confirmPassword()))
+    public void updatePassword(Long userId, Password dto) {
+        dto.validate();
+
+        if(dto.passwordMatches())    // DTO method
             throw new PasswordMismatchException();
 
-        userRepository.updatePassword(id, dto.newPassword());
+        userRepository.updatePassword(userId, dto.newPassword());
+    }
+
+    public boolean isPublic(Long userId) {
+        return userRepository.isPublic(userId);
+    }
+
+    public void updateFollowCount(Long from, Long to, Long value) {
+        userRepository.updateFollowingCount(from, value);
+        userRepository.updateFollowerCount(to, value);
+    }
+
+    public String findName(Long userId) {
+        return userRepository.findName(userId);
     }
 }

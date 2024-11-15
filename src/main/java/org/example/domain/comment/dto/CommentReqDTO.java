@@ -7,4 +7,8 @@ public class CommentReqDTO {
             Long postId,
             Long parentCommentId
     ) {}
+
+    public record Update(
+            String content
+    ) {}
 }

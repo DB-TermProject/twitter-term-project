@@ -6,9 +6,11 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import static org.example.util.converter.TimeConverter.convertToString;
+
 public class PostResDTO {
 
-    public record PostSummary(
+    public record Detail(
             Long id,
             String content,
             Long likeCount,
@@ -19,7 +21,7 @@ public class PostResDTO {
             String writer,
             Boolean isVerified
     ) {
-        public static PostSummary toPostSummary(ResultSet resultSet) throws SQLException {
+        public static Detail toDetail(ResultSet resultSet) throws SQLException {
             Long id = resultSet.getLong("id");
             String content = resultSet.getString("content");
             Long likeCount = resultSet.getLong("like_count");
@@ -29,26 +31,7 @@ public class PostResDTO {
             String profileImg = resultSet.getString("profile_image_url");
             Boolean isVerified = resultSet.getBoolean("is_verified");
 
-            return new PostSummary(id, content, likeCount, commentCount, createdAt, profileImg, writer, isVerified);
-        }
-
-        private static String convertToString(Timestamp time) {
-            LocalDateTime createdAt = time.toLocalDateTime();
-            LocalDateTime now = LocalDateTime.now();
-
-            Duration duration = Duration.between(createdAt, now);
-
-            if (duration.toMinutes() < 1) {
-                return "방금 전";
-            } else if (duration.toMinutes() < 60) {
-                return duration.toMinutes() + "분 전";
-            } else if (duration.toHours() < 24) {
-                return duration.toHours() + "시간 전";
-            } else if (duration.toDays() < 7) {
-                return duration.toDays() + "일 전";
-            } else {
-                return createdAt.toLocalDate().toString(); // 예: "2024-11-05"
-            }
+            return new Detail(id, content, likeCount, commentCount, createdAt, profileImg, writer, isVerified);
         }
     }
 }

@@ -42,8 +42,8 @@ class PostServiceTest {
         // given
         Long userId = 3L;
         List<Detail> expectedFeed = Arrays.asList(
-                new Detail(1L, "Post content 1", 5L, 2L, "5분 전", "Alice", "http://example.com/profile1.jpg", true, true),
-                new Detail(2L, "Post content 2", 10L, 4L, "3시간 전", "Bob", "http://example.com/profile2.jpg", false, false)
+                new Detail(1L, "Post content 1", 5L, 2L, "5분 전", "Alice", "http://example.com/profile1.jpg", true),
+                new Detail(2L, "Post content 2", 10L, 4L, "3시간 전", "Bob", "http://example.com/profile2.jpg", false)
         );
 
         // when
