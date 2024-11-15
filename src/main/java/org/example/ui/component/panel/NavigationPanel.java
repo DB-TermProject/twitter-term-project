@@ -1,15 +1,23 @@
 package org.example.ui.component.panel;
 
+import org.example.ui.page.FollowPage;
+import org.example.ui.page.HomeFeedPage;
+import org.example.ui.page.MyPage;
+import org.example.ui.page.NewTweetPage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
 
 public class NavigationPanel extends JPanel {
     private final JFrame parentFrame;
+    private final Connection connection;
 
-    public NavigationPanel(JFrame parentFrame) {
+    public NavigationPanel(JFrame parentFrame, Connection connection) {
         this.parentFrame = parentFrame;
+        this.connection = connection;
         initializePanel();
     }
 
@@ -37,7 +45,7 @@ public class NavigationPanel extends JPanel {
             iconLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    handleNavigationClick(iconName);
+                    handleNavigationClick(connection, iconName);
                 }
 
                 @Override
@@ -59,20 +67,36 @@ public class NavigationPanel extends JPanel {
         }
     }
 
-    private void handleNavigationClick(String iconName) {
+    private void handleNavigationClick(Connection connection, String iconName) {
         // 네비게이션 클릭 처리
         switch (iconName) {
             case "home.png":
-                System.out.println("홈으로 이동");
+                parentFrame.dispose();  // 현재 창 닫기
+                SwingUtilities.invokeLater(() -> {
+                    HomeFeedPage homePage = new HomeFeedPage(connection);
+                    homePage.setVisible(true);
+                });
                 break;
             case "follow.png":
-                System.out.println("팔로우 페이지로 이동");
+                parentFrame.dispose();  // 현재 창 닫기
+                SwingUtilities.invokeLater(() -> {
+                    FollowPage followPage = new FollowPage(connection);
+                    followPage.setVisible(true);
+                });
                 break;
             case "alarm.png":
-                System.out.println("알림 페이지로 이동");
+                parentFrame.dispose();  // 현재 창 닫기
+                SwingUtilities.invokeLater(() -> {
+                    HomeFeedPage homePage = new HomeFeedPage(connection);
+                    homePage.setVisible(true);
+                });
                 break;
             case "user.png":
-                System.out.println("프로필 페이지로 이동");
+                parentFrame.dispose();  // 현재 창 닫기
+                SwingUtilities.invokeLater(() -> {
+                    MyPage myPage = new MyPage(connection);
+                    myPage.setVisible(true);
+                });
                 break;
         }
     }

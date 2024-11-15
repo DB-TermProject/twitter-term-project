@@ -32,16 +32,16 @@ public class InteractionPanel extends JPanel {
     }
 
     private void initializePanel() {
-        setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        setBackground(Color.WHITE);
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        setBackground(Color.white);
         setName("interactionPanel");
-        setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
+        setBorder(BorderFactory.createEmptyBorder(0, -5, 0, 0));
 
         // 댓글 아이콘이 필요한 경우에만 추가
         if (showCommentIcon) {
-            commentPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
-            commentPanel.setBackground(Color.WHITE);
-            commentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));  // 간격 조정
+            commentPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            commentPanel.setBackground(Color.white);
+            commentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 50));  // 간격 조정
             InteractionLabel commentLabel = new InteractionLabel("comment.png", "0", parentFrame);
             commentPanel.add(commentLabel);
             add(commentPanel);

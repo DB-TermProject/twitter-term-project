@@ -74,7 +74,7 @@ public class HomeFeedPage extends JFrame {
         centerPanel.add(scrollPane, BorderLayout.CENTER);
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);
-        mainPanel.add(new NavigationPanel(this), BorderLayout.SOUTH);
+        mainPanel.add(new NavigationPanel(this, connection), BorderLayout.SOUTH);
 
         add(mainPanel);
     }
@@ -125,8 +125,4 @@ public class HomeFeedPage extends JFrame {
         return containerPanel;
     }
 
-    // 피드 새로고침 메소드
-    public void refreshFeed() {
-        feedPanel.refreshFeed();
-    }
 }

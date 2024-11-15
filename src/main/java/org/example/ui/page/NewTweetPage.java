@@ -124,7 +124,7 @@ public class NewTweetPage extends JFrame {
 
         bottomContainer.add(buttonPanel, BorderLayout.NORTH);
 
-        bottomContainer.add(new NavigationPanel(this), BorderLayout.SOUTH);
+        bottomContainer.add(new NavigationPanel(this, connection), BorderLayout.SOUTH);
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         mainPanel.add(bottomContainer, BorderLayout.SOUTH);
