@@ -56,7 +56,7 @@ class UserServiceTest {
         Long userId = 3L;
         UserReqDTO.Profile profileDto = new UserReqDTO.Profile("New Info", "image_url", "Org", false);
 
-        UserResDTO.ProfileResponse response = userService.updateProfile(userId, profileDto);
+        UserResDTO.ProfileUpdateResponse response = userService.updateProfile(userId, profileDto);
 
         assertEquals(profileDto.info(), response.info());
         assertEquals(profileDto.profile_image_url(), response.profile_image_url());
@@ -71,5 +71,12 @@ class UserServiceTest {
         UserReqDTO.Password passwordDto = new UserReqDTO.Password("qwer1234", "qwer1234");
 
         userService.updatePassword(userId, passwordDto);
+    }
+
+    @Test
+    @Order(5)
+    void 내_프로필_조회() {
+        Long userId = 1L;
+        System.out.println(userService.read(userId));
     }
 }
