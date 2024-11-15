@@ -23,6 +23,6 @@ class CommentLikeServiceTest {
         Long commentId = 7L;
 
         // when
-        commentLikeService.save(userId, commentId);
+        commentLikeService.like(userId, commentId);
     }
 }
