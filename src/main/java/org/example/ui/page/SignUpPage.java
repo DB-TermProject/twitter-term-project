@@ -14,7 +14,7 @@ public class SignUpPage extends JFrame {
 
 
         setTitle("Twitter Sign Up");
-        setSize(400, 600);
+        setSize(450, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
@@ -41,49 +41,49 @@ public class SignUpPage extends JFrame {
         JLabel signUpLabel = new JLabel("Create a new account");
         signUpLabel.setFont(new Font("맑은 고딕", Font.BOLD, 25));
         signUpLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        signUpLabel.setBounds(0, 80, 400, 50);
+        signUpLabel.setBounds(25, 90, 400, 50);
         add(signUpLabel);
 
         // Email 입력 필드 레이블
         JLabel emailLabel = new JLabel("Email :");
-        emailLabel.setBounds(30, 150, 80, 25);
+        emailLabel.setBounds(50, 180, 80, 25);
         add(emailLabel);
 
         // 둥근 모양의 Email 입력 텍스트 필드
         RoundedTextField emailField = new RoundedTextField(15);
-        emailField.setBounds(110, 150, 200, 30);
+        emailField.setBounds(130, 180, 250, 30);
         add(emailField);
 
         // Password 입력 필드 레이블
         JLabel passwordLabel = new JLabel("Password :");
-        passwordLabel.setBounds(30, 200, 80, 25);
+        passwordLabel.setBounds(50, 260, 80, 25);
         add(passwordLabel);
 
         // 둥근 모양의 Password 입력 필드
         RoundedPasswordField passwordField = new RoundedPasswordField(15);
-        passwordField.setBounds(110, 200, 200, 30);
+        passwordField.setBounds(130, 260, 250, 30);
         add(passwordField);
 
         // 이름 입력 필드 레이블
         JLabel nameLabel = new JLabel("Name :");
-        nameLabel.setBounds(30, 250, 80, 25);
+        nameLabel.setBounds(50, 340, 80, 25);
         add(nameLabel);
 
         // 둥근 모양의 이름 입력 텍스트 필드
         RoundedTextField nameField = new RoundedTextField(15);
-        nameField.setBounds(110, 250, 200, 30);
+        nameField.setBounds(130, 340, 250, 30);
         add(nameField);
 
         // 안내 메시지 레이블
         JLabel guideLabel = new JLabel("<html>By clicking Sign Up, you become a member of our Twitter.<br>You can see and like many posts.</html>");
         guideLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
         guideLabel.setForeground(Color.GRAY); // 흐릿한 색상 적용
-        guideLabel.setBounds(30, 330, 320, 40); // 위치 조정
+        guideLabel.setBounds(60, 395, 320, 40); // 위치 조정
         add(guideLabel);
 
         // Sign Up 버튼
         JButton signUpButton = new JButton("Sign Up");
-        signUpButton.setBounds(125, 400, 150, 40);
+        signUpButton.setBounds(150, 470, 150, 40);
         signUpButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
         signUpButton.setForeground(Color.WHITE);
         signUpButton.setBackground(new Color(0, 200, 0)); // 녹색 배경
@@ -126,7 +126,7 @@ public class SignUpPage extends JFrame {
         alreadyAccountLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
         alreadyAccountLabel.setForeground(new Color(0, 120, 255)); // 파란색 텍스트
         alreadyAccountLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        alreadyAccountLabel.setBounds(0, 450, 400, 30);
+        alreadyAccountLabel.setBounds(0, 535, 450, 30);
 
         // 마우스를 올리면 색상이 변경되며, 클릭 시 LoginPage 열기
         alreadyAccountLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
