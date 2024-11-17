@@ -15,7 +15,6 @@ public class TransactionManager {
         void doInTransaction(Connection connection) throws Exception;
     }
 
-
     public <T> T execute(TransactionCallback<T> callback) {
         try (Connection connection = JdbcConfig.getConnection()) {
             try {
