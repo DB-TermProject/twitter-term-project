@@ -21,16 +21,7 @@ public class CommentService {
     private final UserService userService = new UserService();
 
     public void save(Long userId, Save dto) {
-        if(dto.parentCommentId() == null) {
-            commentRepository.save(userId, dto.content(), dto.postId());
-            noticeService.notice(postService.findWriter(dto.postId()), COMMENT_ON_POST.getMessage(userService.findName(userId)));
-        } else {
-            commentRepository.save(userId, dto);
-            if(!userId.equals(findWriter(dto.parentCommentId())))
-                noticeService.notice(findWriter(dto.parentCommentId()), COMMENT_ON_COMMENT.getMessage(userService.findName(userId)));
-        }
-
-        postService.updateCommentCount(dto.postId(), 1L);
+        commentRepository.save(userId, dto);
     }
 
     public Long findWriter(Long commentId) {
