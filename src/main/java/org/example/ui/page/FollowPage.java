@@ -10,6 +10,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import org.example.ui.component.panel.*;
+
 public class FollowPage extends JFrame {
 
     private JLabel[] optionLabels;
@@ -18,16 +21,17 @@ public class FollowPage extends JFrame {
     private RoundedPanel contentPanel;
     private JScrollPane scrollPane;
     private List<User> followingUsers;
+    private Connection connection;
 
     // Variables to store counts
     private int followerCount = 7;
 
     public FollowPage(Connection con) {
-        // Set up the frame
+        this.connection = con;
         setTitle("Follow Page");
-        setSize(400, 600);
+        setSize(450, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
+        setLayout(new BorderLayout());  // BorderLayout 사용
         getContentPane().setBackground(Color.WHITE);
 
         // Initialize following users list with sample data
@@ -40,6 +44,12 @@ public class FollowPage extends JFrame {
         followingUsers.add(new User("User 6", "Description for User 6", Color.BLUE));
         followingUsers.add(new User("User 7", "Description for User 7", Color.BLUE));
         followingUsers.add(new User("User 8", "Description for User 8", Color.BLUE));
+
+
+        // 메인 패널 생성
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBackground(Color.WHITE);
 
         // Create the top panel
         JPanel topPanel = new JPanel();
@@ -131,6 +141,16 @@ public class FollowPage extends JFrame {
         setActiveOption(0);
         switchPage(0);
 
+        setVisible(true);
+        // scrollPane의 크기와 위치 조정 (네비게이션 바를 위한 공간 확보)
+        scrollPane.setBounds(30, 150, 330, 425);  // 높이를 425로 수정
+
+        // 네비게이션 패널 추가
+        NavigationPanel navigationPanel = new NavigationPanel(this, con);
+        navigationPanel.setBounds(0, 610, 450, 40);  // 위치와 크기 설정
+        add(navigationPanel);
+
+        setLocationRelativeTo(null);  // 화면 중앙에 표시
         setVisible(true);
     }
 
