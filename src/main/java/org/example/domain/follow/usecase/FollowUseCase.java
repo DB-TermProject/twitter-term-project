@@ -21,22 +21,22 @@ public class FollowUseCase {
     public void follow(Follow dto) {
         transactionManager.execute(connection -> {
             dto.validate();
-            if(userService.isPublic(dto.to())) {
+            if(userService.isPublic(dto.to(), connection)) {
                 followService.save(dto, "ACCEPTED", connection);
-                userService.updateFollowCount(dto.from(), dto.to(), 1L);
-                noticeService.notice(dto.to(), FOLLOWING.getMessage(userService.findName(dto.from())), connection);
+                userService.updateFollowCount(dto.from(), dto.to(), 1L, connection);
+                noticeService.notice(dto.to(), FOLLOWING.getMessage(userService.findName(dto.from(), connection)), connection);
             } else {
                 followService.save(dto, "PENDING", connection);
-                noticeService.notice(dto.to(), RECEIVED_FOLLOW_REQUEST.getMessage(userService.findName(dto.from())), connection);
+                noticeService.notice(dto.to(), RECEIVED_FOLLOW_REQUEST.getMessage(userService.findName(dto.from(), connection)), connection);
             }
         });
     }
 
     public void unfollow(Follow dto) {
         transactionManager.execute(connection -> {
-            followService.delete(dto, connection);
             dto.validate();
-            userService.updateFollowCount(dto.from(), dto.to(), -1L);
+            followService.delete(dto, connection);
+            userService.updateFollowCount(dto.from(), dto.to(), -1L, connection);
         });
     }
 
@@ -44,7 +44,7 @@ public class FollowUseCase {
         transactionManager.execute(connection -> {
             dto.validate();
             followService.update(dto, connection);
-            noticeService.notice(dto.from(), ACCEPTED_FOLLOW_REQUEST.getMessage(userService.findName(dto.to())), connection);
+            noticeService.notice(dto.from(), ACCEPTED_FOLLOW_REQUEST.getMessage(userService.findName(dto.to(), connection)), connection);
         });
     }
 
