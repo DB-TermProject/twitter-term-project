@@ -1,8 +1,5 @@
 package org.example.domain.like.repository;
 
-import org.example.util.config.JdbcConfig;
-import org.example.util.exception.SqlExecutionException;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -10,34 +7,24 @@ import java.sql.SQLException;
 public class PostLikeRepository implements LikeRepository {
 
     @Override
-    public void save(Long userId, Long postId) {
+    public void save(Long userId, Long postId, Connection connection) throws SQLException {
         String sql = "INSERT INTO post_like (liker_id, post_id) values (?, ?)";
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, userId);
             statement.setLong(2, postId);
-
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new SqlExecutionException();
         }
     }
 
     @Override
-    public void delete(Long userId, Long postId) {
+    public void delete(Long userId, Long postId, Connection connection) throws SQLException {
         String sql = "DELETE FROM post_like WHERE liker_id = ? AND post_id = ?";
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, userId);
             statement.setLong(2, postId);
-
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new SqlExecutionException();
         }
     }
 }

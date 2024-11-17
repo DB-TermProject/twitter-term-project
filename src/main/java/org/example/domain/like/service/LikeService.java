@@ -1,8 +1,11 @@
 package org.example.domain.like.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public interface LikeService {
 
-    void like(Long userId, Long id);
+    void save(Long userId, Long id, Connection connection) throws SQLException;
 
-    void unlike(Long userId, Long id);
+    void delete(Long userId, Long id, Connection connection) throws SQLException;
 }
