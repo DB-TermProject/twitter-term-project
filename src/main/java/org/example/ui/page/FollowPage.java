@@ -15,11 +15,15 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import org.example.ui.component.panel.*;
+
 public class FollowPage extends JFrame {
 
     private JLabel[] optionLabels;
     private JLabel followingCountLabel;
     private JLabel followerCountLabel;
+
     private JPanel innerPanel;
     private Connection connection;
     private List<String[]> followingUsers; // List to manage following users
@@ -52,12 +56,10 @@ public class FollowPage extends JFrame {
         recommendUsers.add(new String[]{"User17", "(Company) Company17", "(Intro) Intro17", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user7"});
         recommendUsers.add(new String[]{"User18", "(Company) Company18", "(Intro) Intro18", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user9"});
 
-
-        // Set up the frame
         setTitle("Follow Page");
-        setSize(400, 600);
+        setSize(450, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
+        setLayout(new BorderLayout());  // BorderLayout 사용
         getContentPane().setBackground(Color.WHITE);
 
         // Create the top panel
@@ -187,6 +189,16 @@ public class FollowPage extends JFrame {
 
         add(bottomNavPanel);
 
+        setVisible(true);
+        // scrollPane의 크기와 위치 조정 (네비게이션 바를 위한 공간 확보)
+        scrollPane.setBounds(30, 150, 330, 425);  // 높이를 425로 수정
+
+        // 네비게이션 패널 추가
+        NavigationPanel navigationPanel = new NavigationPanel(this, con);
+        navigationPanel.setBounds(0, 610, 450, 40);  // 위치와 크기 설정
+        add(navigationPanel);
+
+        setLocationRelativeTo(null);  // 화면 중앙에 표시
         setVisible(true);
     }
 

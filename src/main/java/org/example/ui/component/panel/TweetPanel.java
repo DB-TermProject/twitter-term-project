@@ -23,7 +23,7 @@ public class TweetPanel extends JPanel {
         setLayout(new BorderLayout(10, 0));
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
+                BorderFactory.createLineBorder(Color.white, 1),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
 
