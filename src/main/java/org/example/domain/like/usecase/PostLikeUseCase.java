@@ -21,7 +21,7 @@ public class PostLikeUseCase {
         transactionManager.execute(connection -> {
             likeService.save(userId, postId, connection);
             postService.updateLikeCount(postId, 1L);
-            noticeService.notice(postService.findWriter(postId), LIKE_ON_POST.getMessage(userService.findName(userId)));
+            noticeService.notice(postService.findWriter(postId), LIKE_ON_POST.getMessage(userService.findName(userId)), connection);
         });
     }
 

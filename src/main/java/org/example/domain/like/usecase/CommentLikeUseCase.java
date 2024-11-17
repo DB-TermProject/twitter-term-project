@@ -21,7 +21,7 @@ public class CommentLikeUseCase {
         transactionManager.execute(connection -> {
             likeService.save(userId, commentId, connection);
             commentService.updateLikeCount(commentId, 1L, connection);
-            noticeService.notice(commentService.findWriter(commentId, connection), LIKE_ON_COMMENT.getMessage(userService.findName(userId)));
+            noticeService.notice(commentService.findWriter(commentId, connection), LIKE_ON_COMMENT.getMessage(userService.findName(userId)), connection);
         });
     }
 

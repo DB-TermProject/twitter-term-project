@@ -24,10 +24,10 @@ public class FollowUseCase {
             if(userService.isPublic(dto.to())) {
                 followService.save(dto, "ACCEPTED", connection);
                 userService.updateFollowCount(dto.from(), dto.to(), 1L);
-                noticeService.notice(dto.to(), FOLLOWING.getMessage(userService.findName(dto.from())));
+                noticeService.notice(dto.to(), FOLLOWING.getMessage(userService.findName(dto.from())), connection);
             } else {
                 followService.save(dto, "PENDING", connection);
-                noticeService.notice(dto.to(), RECEIVED_FOLLOW_REQUEST.getMessage(userService.findName(dto.from())));
+                noticeService.notice(dto.to(), RECEIVED_FOLLOW_REQUEST.getMessage(userService.findName(dto.from())), connection);
             }
         });
     }
@@ -44,7 +44,7 @@ public class FollowUseCase {
         transactionManager.execute(connection -> {
             dto.validate();
             followService.update(dto, connection);
-            noticeService.notice(dto.from(), ACCEPTED_FOLLOW_REQUEST.getMessage(userService.findName(dto.to())));
+            noticeService.notice(dto.from(), ACCEPTED_FOLLOW_REQUEST.getMessage(userService.findName(dto.to())), connection);
         });
     }
 
