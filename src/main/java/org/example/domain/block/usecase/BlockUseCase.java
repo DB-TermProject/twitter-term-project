@@ -23,14 +23,12 @@ public class BlockUseCase {
                 followService.unfollow(follow);
 
             blockService.save(dto, connection);
-            return null;
         });
     }
 
     public void unblock(Block dto) {
         transactionManager.execute(connection -> {
             blockService.delete(dto, connection);
-            return null;
         });
     }
 
