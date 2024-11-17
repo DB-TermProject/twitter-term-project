@@ -19,14 +19,14 @@ public class ChangePasswordPage extends JFrame {
         setTitle("Change Password");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        setSize(450, 400);
+        setSize(450, 700);
         setResizable(false);
         setLocationRelativeTo(null);
 
         // 메인 패널 생성
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(100, 20, 0, 20));
 
         // 상단: 제목 레이블
         JLabel titleLabel = new JLabel("비밀번호 변경", SwingConstants.CENTER);
@@ -38,7 +38,7 @@ public class ChangePasswordPage extends JFrame {
         inputPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 5, 10, 5); // 컴포넌트 간격 설정
+        gbc.insets = new Insets(50, 5, 10, 5); // 컴포넌트 간격 설정
 
         // 현재 비밀번호
         JLabel currentPasswordLabel = new JLabel("기존 비밀번호:");
