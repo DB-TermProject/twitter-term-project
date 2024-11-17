@@ -129,7 +129,7 @@ public class TweetDetailPage extends JFrame {
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
         // 하단 네비게이션 바
-        mainPanel.add(new NavigationPanel(this), BorderLayout.SOUTH);
+        mainPanel.add(new NavigationPanel(this,connection), BorderLayout.SOUTH);
 
         add(mainPanel);
     }

@@ -17,7 +17,7 @@ public class HeaderPanel extends JPanel {
     private void initializePanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
-        setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+        setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
 
         // 트위터 로고와 제목을 담을 패널
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
