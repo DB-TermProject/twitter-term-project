@@ -5,7 +5,7 @@ import org.example.domain.follow.dto.FollowResDTO.FollowSummary;
 import org.example.domain.follow.service.FollowService;
 import org.example.domain.notice.service.NoticeService;
 import org.example.domain.user.service.UserService;
-import org.example.util.TransactionManager;
+import org.example.util.advice.TransactionManager;
 
 import java.util.List;
 

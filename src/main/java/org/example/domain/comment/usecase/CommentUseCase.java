@@ -7,7 +7,7 @@ import org.example.domain.comment.service.CommentService;
 import org.example.domain.notice.service.NoticeService;
 import org.example.domain.post.service.PostService;
 import org.example.domain.user.service.UserService;
-import org.example.util.TransactionManager;
+import org.example.util.advice.TransactionManager;
 
 import java.util.List;
 

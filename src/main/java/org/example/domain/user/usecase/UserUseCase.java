@@ -3,9 +3,8 @@ package org.example.domain.user.usecase;
 import org.example.domain.user.dto.UserReqDTO;
 import org.example.domain.user.dto.UserReqDTO.Login;
 import org.example.domain.user.dto.UserReqDTO.SignUp;
-import org.example.domain.user.dto.UserResDTO;
 import org.example.domain.user.service.UserService;
-import org.example.util.TransactionManager;
+import org.example.util.advice.TransactionManager;
 import org.example.util.exception.PasswordMismatchException;
 import org.example.util.exception.UserExistsException;
 

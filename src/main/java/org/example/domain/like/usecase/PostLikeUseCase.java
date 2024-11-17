@@ -5,7 +5,7 @@ import org.example.domain.like.service.PostLikeService;
 import org.example.domain.notice.service.NoticeService;
 import org.example.domain.post.service.PostService;
 import org.example.domain.user.service.UserService;
-import org.example.util.TransactionManager;
+import org.example.util.advice.TransactionManager;
 
 import static org.example.domain.notice.enums.NoticeMessage.LIKE_ON_POST;
 

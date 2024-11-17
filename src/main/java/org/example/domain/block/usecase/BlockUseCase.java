@@ -4,7 +4,7 @@ import org.example.domain.block.dto.BlockReqDTO.Block;
 import org.example.domain.block.service.BlockService;
 import org.example.domain.follow.service.FollowService;
 import org.example.domain.user.service.UserService;
-import org.example.util.TransactionManager;
+import org.example.util.advice.TransactionManager;
 
 import java.util.List;
 
