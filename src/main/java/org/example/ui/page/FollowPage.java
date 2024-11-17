@@ -1,5 +1,7 @@
 package org.example.ui.page;
 
+import org.example.ui.component.button.RoundJButton;
+
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
@@ -214,11 +216,8 @@ public class FollowPage extends JFrame {
                     JPanel userPanel = createUserPanel(user);
                     innerPanel.add(userPanel); // Add user panel to innerPanel
 
-                    // Add a separator below each user panel
-                    JSeparator separator = new JSeparator();
-                    separator.setForeground(Color.LIGHT_GRAY);
-                    separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1)); // Full width separator
-                    innerPanel.add(separator); // Add separator to innerPanel
+
+
                 }
             }
         } else if (index == 1) { // "Follower" page content
@@ -229,11 +228,8 @@ public class FollowPage extends JFrame {
                     JPanel userPanel = createUserPanel(user);
                     innerPanel.add(userPanel); // Add user panel to innerPanel
 
-                    // Add a separator below each user panel
-                    JSeparator separator = new JSeparator();
-                    separator.setForeground(Color.LIGHT_GRAY);
-                    separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1)); // Full width separator
-                    innerPanel.add(separator); // Add separator to innerPanel
+
+
                 }
             }
         }
@@ -244,11 +240,8 @@ public class FollowPage extends JFrame {
                     JPanel userPanel = createRecommendPanel(user);
                     innerPanel.add(userPanel); // Add user panel to innerPanel
 
-                    // Add a separator below each user panel
-                    JSeparator separator = new JSeparator();
-                    separator.setForeground(Color.LIGHT_GRAY);
-                    separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1)); // Full width separator
-                    innerPanel.add(separator); // Add separator to innerPanel
+
+
                 }
             }
 
@@ -263,15 +256,11 @@ public class FollowPage extends JFrame {
                     // 여기서 버튼 텍스트를 "Cancel"로 설정합니다.
                     JButton followButton = (JButton) ((JPanel) userPanel.getComponent(2)).getComponent(0);
                     followButton.setText("Cancel");
-                    followButton.setBackground(new Color(255, 99, 71));
+                    followButton.setBackground(new Color(255, 159, 159));
 
                     innerPanel.add(userPanel); // Add user panel to innerPanel
 
-                    // Add a separator below each user panel
-                    JSeparator separator = new JSeparator();
-                    separator.setForeground(Color.LIGHT_GRAY);
-                    separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1)); // Full width separator
-                    innerPanel.add(separator); // Add separator to innerPanel
+
                 }
             }
         }
@@ -292,11 +281,7 @@ public class FollowPage extends JFrame {
 
                     innerPanel.add(userPanel); // Add user panel to innerPanel
 
-                    // Add a separator below each user panel
-                    JSeparator separator = new JSeparator();
-                    separator.setForeground(Color.LIGHT_GRAY);
-                    separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1)); // Full width separator
-                    innerPanel.add(separator); // Add separator to innerPanel
+
                 }
             }
         }
@@ -308,11 +293,14 @@ public class FollowPage extends JFrame {
                     JPanel userPanel = createUserPanel(user);
 
                     // Unblock 버튼 추가 및 설정
-                    JButton unblockButton = new JButton("Unblock");
-                    unblockButton.setBackground(new Color(255, 99, 71));
-                    unblockButton.setPreferredSize(new Dimension(80, 30));
-                    unblockButton.setFocusPainted(false);
+                    RoundJButton unblockButton = new RoundJButton("Unblock", 15,80,30);
+
+                    //JButton blockButton = new JButton("Unblock");
                     unblockButton.setFont(new Font("마린 고딕", Font.PLAIN, 10));
+                    unblockButton.setFocusPainted(false);
+                    unblockButton.setBackground(new Color(255, 159, 159)); // 자몽색 for Unblock
+                    unblockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+                    // blockButton.setPreferredSize(new Dimension(80, 30));
 
                     // Unblock 버튼 액션 리스너 추가
                     unblockButton.addActionListener(e -> {
@@ -328,11 +316,7 @@ public class FollowPage extends JFrame {
 
                     innerPanel.add(userPanel); // Add user panel to innerPanel
 
-                    // Add a separator below each user panel
-                    JSeparator separator = new JSeparator();
-                    separator.setForeground(Color.LIGHT_GRAY);
-                    separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1)); // Full width separator
-                    innerPanel.add(separator); // Add separator to innerPanel
+
                 }
             }
         }
@@ -340,7 +324,7 @@ public class FollowPage extends JFrame {
         else {
             JLabel contentLabel = new JLabel();
             contentLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            contentLabel.setFont(new Font("마린 고딕", Font.PLAIN, 14));
+            contentLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
             contentLabel.setText(getPageContentText(index));
             innerPanel.add(contentLabel, BorderLayout.CENTER);
         }
@@ -420,12 +404,18 @@ public class FollowPage extends JFrame {
         rightPanel.setBackground(Color.WHITE);
         rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 20));
 
-        JButton blockButton = new JButton("follow");
+
+
+
+        RoundJButton blockButton = new RoundJButton("Follow", 15,80,30);
+
         blockButton.setFont(new Font("마린 고딕", Font.PLAIN, 10));
         blockButton.setFocusPainted(false);
         blockButton.setBackground(new Color(135, 206, 250)); // 하늘색 팔로우버튼
         blockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        blockButton.setPreferredSize(new Dimension(80, 30));
+       // blockButton.setPreferredSize(new Dimension(80, 30));
+
+
 
         blockButton.addActionListener(e -> {
             recommendUsers.remove(user); // 유저를 목록에서 제거
@@ -527,19 +517,25 @@ public class FollowPage extends JFrame {
         rightPanel.setBackground(Color.WHITE);
         rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 20));
 
-        JButton followButton = new JButton("Follow");
+
+        RoundJButton followButton = new RoundJButton("Follow", 15,80,30);
+
+        //Button followButton = new JButton("Follow");
         followButton.setFont(new Font("마린 고딕", Font.PLAIN, 10));
         followButton.setFocusPainted(false);
         followButton.setBackground(new Color(135, 206, 250)); // 하늘색 for Follow
         followButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        followButton.setPreferredSize(new Dimension(80, 30)); // Set preferred size for longer rounded button
+        //followButton.setPreferredSize(new Dimension(80, 30)); // Set preferred size for longer rounded button
 
-        JButton followingButton = new JButton("Following");
+
+        RoundJButton followingButton = new RoundJButton("Following", 15,80,30);
+
+       // JButton followingButton = new JButton("Following");
         followingButton.setFont(new Font("마린 고딕", Font.PLAIN, 10));
         followingButton.setFocusPainted(false);
         followingButton.setBackground(Color.WHITE); // 유지 (white for Following)
         followingButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        followingButton.setPreferredSize(new Dimension(80, 30)); // Set preferred size for longer rounded button
+       // followingButton.setPreferredSize(new Dimension(80, 30)); // Set preferred size for longer rounded button
 
         if (user[4].equals("true")) {
             rightPanel.add(followingButton);
@@ -566,12 +562,15 @@ public class FollowPage extends JFrame {
             updateFollowingCount((int) followingUsers.stream().filter(u -> u[4].equals("true")).count());
         });
 
-        JButton blockButton = new JButton("Unblock");
+
+        RoundJButton blockButton = new RoundJButton("Unblock", 15,80,30);
+
+        //JButton blockButton = new JButton("Unblock");
         blockButton.setFont(new Font("마린 고딕", Font.PLAIN, 10));
         blockButton.setFocusPainted(false);
-        blockButton.setBackground(new Color(255, 99, 71)); // 자몽색 for Unblock
+        blockButton.setBackground(new Color(255, 159, 159)); // 자몽색 for Unblock
         blockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        blockButton.setPreferredSize(new Dimension(80, 30));
+       // blockButton.setPreferredSize(new Dimension(80, 30));
 
         blockButton.addActionListener(e -> {
             followingUsers.remove(user); // 유저를 목록에서 제거
@@ -660,8 +659,5 @@ public class FollowPage extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        Connection connection = null;
-        new FollowPage(connection);
-    }
+
 }

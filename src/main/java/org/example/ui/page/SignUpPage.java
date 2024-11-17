@@ -110,8 +110,11 @@ public class SignUpPage extends JFrame {
                 } else {
                     // 모든 정보가 올바르게 입력되었을 경우
                     JOptionPane.showMessageDialog(SignUpPage.this, "<html>Congratulations!<br>Sign Up is complete</html>");
-                    dispose(); // 현재 창 닫기
-                    // new NextPage(); // 다음 페이지 열기 (주석 처리)
+                    setVisible(false); // 현재 창 숨기기
+                    SwingUtilities.invokeLater(() -> {
+                        LoginPage loginPage = new LoginPage(con); // 회원가입 페이지 열기
+                        loginPage.setVisible(true);
+                    });
                 }
             }
         });
@@ -140,8 +143,11 @@ public class SignUpPage extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                dispose(); // 현재 SignUpPage 창 닫기
-                // new LoginPage(); // LoginPage 창 열기 (임시 주석처리)
+                setVisible(false); // 현재 창 숨기기
+                SwingUtilities.invokeLater(() -> {
+                    LoginPage loginPage = new LoginPage(con); // 회원가입 페이지 열기
+                    loginPage.setVisible(true);
+                });
             }
         });
 
