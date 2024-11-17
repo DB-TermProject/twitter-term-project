@@ -25,11 +25,11 @@ public class CommentUseCase {
     public void comment(Long userId, Save dto) {
         transactionManager.execute(connection -> {
             if(dto.parentCommentId() == null) {
-                noticeService.notice(postService.findWriter(dto.postId()), COMMENT_ON_POST.getMessage(userService.findName(userId)), connection);
+                noticeService.notice(postService.findWriter(dto.postId()), COMMENT_ON_POST.getMessage(userService.findName(userId, connection)), connection);
             } else {
                 Long writer = commentService.findWriter(dto.parentCommentId(), connection);
                 if(!userId.equals(writer))
-                    noticeService.notice(writer, COMMENT_ON_COMMENT.getMessage(userService.findName(userId)), connection);
+                    noticeService.notice(writer, COMMENT_ON_COMMENT.getMessage(userService.findName(userId, connection)), connection);
             }
 
             commentService.save(userId, dto, connection);
