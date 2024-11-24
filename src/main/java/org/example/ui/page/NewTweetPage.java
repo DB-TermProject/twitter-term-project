@@ -1,12 +1,12 @@
 package org.example.ui.page;
 
 import org.example.ui.component.panel.HeaderPanel;
-import org.example.ui.component.panel.NavigationPanel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
 
-public class NewTweetPage extends JFrame {
+public class NewTweetPage extends JPanel {
     private final Connection connection;
     private final JTextArea tweetArea;
     private static final int MAX_LENGTH = 280;
@@ -14,18 +14,12 @@ public class NewTweetPage extends JFrame {
     public NewTweetPage(Connection connection) {
         this.connection = connection;
         this.tweetArea = new JTextArea();
-        initializeFrame();
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
         createContent();
-        setVisible(true);
     }
 
-    private void initializeFrame() {
-        setTitle("새 트윗");
-        setSize(450, 700);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
-    }
+
 
     private void createContent() {
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -63,15 +57,9 @@ public class NewTweetPage extends JFrame {
 
         // 글자 수 제한 설정
         tweetArea.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                updateCount(countLabel);
-            }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                updateCount(countLabel);
-            }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                updateCount(countLabel);
-            }
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { updateCount(countLabel); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { updateCount(countLabel); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { updateCount(countLabel); }
         });
 
         centerPanel.add(contentPanel, BorderLayout.CENTER);
@@ -82,7 +70,7 @@ public class NewTweetPage extends JFrame {
         bottomContainer.setBackground(Color.WHITE);
 
         // 버튼 패널
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));  // 중앙 정렬, 버튼 사이 간격 220
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
@@ -95,11 +83,8 @@ public class NewTweetPage extends JFrame {
         cancelButton.setPreferredSize(new Dimension(70, 30));
         cancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         cancelButton.addActionListener(e -> {
-            dispose();
-            SwingUtilities.invokeLater(() -> {
-                HomeFeedPage homeFeedPage = new HomeFeedPage(connection);
-                homeFeedPage.setVisible(true);
-            });
+            MainFrame mainFrame = MainFrame.getInstance();
+            mainFrame.showPage("home");
         });
 
         // 글쓰기 버튼
@@ -111,20 +96,13 @@ public class NewTweetPage extends JFrame {
         writeButton.setPreferredSize(new Dimension(70, 30));
         writeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         writeButton.addActionListener(e -> {
-            dispose();
-            SwingUtilities.invokeLater(() -> {
-                HomeFeedPage homeFeedPage = new HomeFeedPage(connection);
-                homeFeedPage.setVisible(true);
-            });
+            MainFrame mainFrame = MainFrame.getInstance();
+            mainFrame.showPage("home");
         });
 
-        // 버튼들을 패널에 추가
         buttonPanel.add(cancelButton);
         buttonPanel.add(writeButton);
-
         bottomContainer.add(buttonPanel, BorderLayout.NORTH);
-
-        bottomContainer.add(new NavigationPanel(this, connection), BorderLayout.SOUTH);
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         mainPanel.add(bottomContainer, BorderLayout.SOUTH);
@@ -132,13 +110,11 @@ public class NewTweetPage extends JFrame {
         add(mainPanel);
     }
 
-
     private void updateCount(JLabel countLabel) {
         String text = tweetArea.getText();
         if (!text.equals("무슨 일이 일어나고 있나요?")) {
             int length = text.length();
             countLabel.setText(length + "/" + MAX_LENGTH);
-
             if (length > MAX_LENGTH) {
                 tweetArea.setText(text.substring(0, MAX_LENGTH));
                 countLabel.setForeground(Color.RED);
@@ -147,4 +123,5 @@ public class NewTweetPage extends JFrame {
             }
         }
     }
+
 }

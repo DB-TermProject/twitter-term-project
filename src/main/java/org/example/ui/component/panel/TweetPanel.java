@@ -1,7 +1,9 @@
 package org.example.ui.component.panel;
 
+import org.example.domain.post.dto.PostResDTO;
 import org.example.ui.component.label.ProfileLabel;
 import org.example.ui.component.label.UserInfoLabel;
+import org.example.ui.page.MainFrame;
 import org.example.ui.page.TweetDetailPage;
 import javax.swing.*;
 import java.awt.*;
@@ -12,10 +14,12 @@ import java.sql.Connection;
 public class TweetPanel extends JPanel {
     private final Connection connection;
     private final JFrame parentFrame;
+    private final PostResDTO.Detail detail;
 
-    public TweetPanel(Connection connection, JFrame parentFrame) {
+    public TweetPanel(Connection connection, JFrame parentFrame, PostResDTO.Detail detail) {
         this.connection = connection;
         this.parentFrame = parentFrame;
+        this.detail = detail;
         initializePanel();
     }
 
@@ -58,13 +62,13 @@ public class TweetPanel extends JPanel {
         contentPanel.setBackground(Color.WHITE);
 
         // 사용자 정보 (UserInfoLabel 컴포넌트 사용)
-        UserInfoLabel userInfoLabel = new UserInfoLabel("사용자 이름", "@handle", "2h");
+        UserInfoLabel userInfoLabel = new UserInfoLabel(detail.writer(), "@handle", detail.createdAt());
         userInfoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // 트윗 내용
         JLabel tweetContent = new JLabel(
                 "<html><body style='width: 240px'>" +
-                        "여기에 트윗 내용이 들어갑니다. 긴 내용의 텍스트도 자동으로 줄바꿈이 됩니다." +
+                        detail.content() +
                         "</body></html>"
         );
         tweetContent.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
@@ -84,40 +88,59 @@ public class TweetPanel extends JPanel {
         return contentPanel;
     }
 
+//    private class TweetClickListener extends MouseAdapter {
+//        @Override
+//        public void mouseClicked(MouseEvent e) {
+//            if (!isClickedOnInteractionPanel(e.getPoint())) {
+//                parentFrame.setVisible(false);
+//                SwingUtilities.invokeLater(() -> {
+//                    TweetDetailPage detailPage = new TweetDetailPage(
+//                            connection
+//                    );
+//                    detailPage.setVisible(true);
+//                });
+//            }
+//        }
+//
+//        @Override
+//        public void mouseEntered(MouseEvent e) {
+//            if (!isClickedOnInteractionPanel(e.getPoint())) {
+//                setCursor(new Cursor(Cursor.HAND_CURSOR));
+//            }
+//        }
+//
+//        @Override
+//        public void mouseExited(MouseEvent e) {
+//            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+//        }
+//    }
     private class TweetClickListener extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (!isClickedOnInteractionPanel(e.getPoint())) {
-                parentFrame.setVisible(false);
-                SwingUtilities.invokeLater(() -> {
-                    TweetDetailPage detailPage = new TweetDetailPage(
-                            connection,
-                            "사용자 이름",
-                            "@handle",
-                            "가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사가다나라맙마사",
-                            "src/main/java/org/example/asset/profileImage.png",
-                            "2h",
-                            "0",
-                            "0"
-                    );
-                    detailPage.setVisible(true);
-                });
+                // 싱글톤 인스턴스를 사용하고 데이터 fetch
+                TweetDetailPage detailPage = TweetDetailPage.getInstance(connection);
+                detailPage.fetch(detail.id());
+
+                // MainFrame을 통해 페이지 전환
+                if (parentFrame instanceof MainFrame) {
+                    ((MainFrame) parentFrame).showPage("detail");
+                }
             }
         }
 
-        @Override
-        public void mouseEntered(MouseEvent e) {
-            if (!isClickedOnInteractionPanel(e.getPoint())) {
-                setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        if (!isClickedOnInteractionPanel(e.getPoint())) {
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
         }
     }
 
+    @Override
+    public void mouseExited(MouseEvent e) {
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }
+}
     private boolean isClickedOnInteractionPanel(Point clickPoint) {
         Component[] components = getComponents();
         for (Component component : components) {

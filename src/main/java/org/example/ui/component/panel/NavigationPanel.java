@@ -1,9 +1,6 @@
 package org.example.ui.component.panel;
 
-import org.example.ui.page.FollowPage;
-import org.example.ui.page.HomeFeedPage;
-import org.example.ui.page.MyPage;
-import org.example.ui.page.NewTweetPage;
+import org.example.ui.page.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,17 +42,17 @@ public class NavigationPanel extends JPanel {
             iconLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    handleNavigationClick(connection, iconName);
+                    handleNavigationClick(iconName);
                 }
 
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    iconLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));  // 변경된 부분
+                    iconLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    iconLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));  // 변경된 부분
+                    iconLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
             });
 
@@ -67,37 +64,23 @@ public class NavigationPanel extends JPanel {
         }
     }
 
-    private void handleNavigationClick(Connection connection, String iconName) {
-        // 네비게이션 클릭 처리
-        switch (iconName) {
-            case "home.png":
-                parentFrame.dispose();  // 현재 창 닫기
-                SwingUtilities.invokeLater(() -> {
-                    HomeFeedPage homePage = new HomeFeedPage(connection);
-                    homePage.setVisible(true);
-                });
-                break;
-            case "follow.png":
-                parentFrame.dispose();  // 현재 창 닫기
-                SwingUtilities.invokeLater(() -> {
-                    FollowPage followPage = new FollowPage(connection);
-                    followPage.setVisible(true);
-                });
-                break;
-            case "alarm.png":
-                parentFrame.dispose();  // 현재 창 닫기
-                SwingUtilities.invokeLater(() -> {
-                    HomeFeedPage homePage = new HomeFeedPage(connection);
-                    homePage.setVisible(true);
-                });
-                break;
-            case "user.png":
-                parentFrame.dispose();  // 현재 창 닫기
-                SwingUtilities.invokeLater(() -> {
-                    MyPage myPage = new MyPage(connection);
-                    myPage.setVisible(true);
-                });
-                break;
+    private void handleNavigationClick(String iconName) {
+        if (parentFrame instanceof MainFrame) {
+            MainFrame mainFrame = (MainFrame) parentFrame;
+            switch (iconName) {
+                case "home.png":
+                    mainFrame.showPage("home");
+                    break;
+                case "follow.png":
+                    mainFrame.showPage("follow");
+                    break;
+                case "alarm.png":
+                    mainFrame.showPage("notice");  // 알림 페이지로 변경 가능
+                    break;
+                case "user.png":
+                    mainFrame.showPage("mypage");
+                    break;
+            }
         }
     }
 }

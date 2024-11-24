@@ -16,13 +16,13 @@ public class PostUseCase {
     public void write(Long userId, Save dto) {
         transactionManager.execute(connection -> {
             dto.validate();
-            postService.save(userId, dto);
+            postService.save(userId, dto, connection);
         });
     }
 
     public List<Detail> readHomeFeed(Long userId) {
         return transactionManager.executeReadOnly(connection ->
-            postService.findHomeFeed(userId)
+            postService.findHomeFeed(userId, connection)
         );
     }
 
@@ -34,7 +34,7 @@ public class PostUseCase {
 
     public Detail readPost(Long postId) {
         return transactionManager.executeReadOnly(connection ->
-                postService.findPost(postId)
+                postService.findPost(postId, connection)
         );
     }
 }
