@@ -55,10 +55,7 @@ public class FeedPanel extends JPanel {
         mainFeedPanel.add(quickPostPanel);
 
         // 구분선 추가
-        JSeparator separator = new JSeparator();
-        separator.setForeground(Color.LIGHT_GRAY);
-        separator.setMaximumSize(new Dimension(450, 1));
-        mainFeedPanel.add(separator);
+
 
         // 기존 피드 목록 추가
         for (int i = 0; i < 10; i++) {
