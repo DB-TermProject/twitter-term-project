@@ -1,11 +1,14 @@
 package org.example.ui.page;
 
+import org.example.ui.component.button.RoundJButton;
+import org.example.ui.component.panel.HeaderPanel;
+
 import org.example.domain.follow.dto.FollowResDTO;
 import org.example.domain.follow.dto.FollowReqDTO;
 
 import org.example.domain.follow.usecase.*;
 
-import org.example.ui.component.button.RoundJButton;
+
 import org.example.ui.component.panel.NavigationPanel;
 
 
@@ -26,7 +29,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FollowPage extends JFrame {
+public class FollowPage extends JPanel {
 
     private final FollowUseCase followUseCase = new FollowUseCase();
     private final UserConfig userConfig = UserConfig.getInstance();
@@ -44,6 +47,8 @@ public class FollowPage extends JFrame {
     public FollowPage(Connection connection) {
         // Store the connection for future database interactions
         this.connection = connection;
+        setLayout(null);
+        setBackground(Color.white);
 
         readMyFollowings = new ArrayList<>();
         // Initialize the following user list
@@ -71,13 +76,7 @@ public class FollowPage extends JFrame {
 
 
         // Set up the frame
-        setTitle("Follow Page");
-        setSize(450, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
-        getContentPane().setBackground(Color.WHITE);
-        setResizable(false);
-        setLocationRelativeTo(null);
+
 
         // Create the top panel
         JPanel topPanel = new JPanel();
@@ -195,9 +194,7 @@ public class FollowPage extends JFrame {
 
 
 
-        NavigationPanel navigationPanel = new NavigationPanel(this, connection);
-        navigationPanel.setBounds(0, 610, 450, 60);  // 위치와 크기 설정
-        add(navigationPanel, BorderLayout.SOUTH);
+
 
 
         setVisible(true);
