@@ -130,7 +130,7 @@ public class LoginPage extends JPanel {
                 mainFrame.showHomeFeedPage(me.id());
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this,
-                        ex.getMessage(),
+                        "Wrong ID or Password!",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
             }

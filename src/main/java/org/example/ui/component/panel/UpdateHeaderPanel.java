@@ -1,7 +1,10 @@
 package org.example.ui.component.panel;
 
+import org.example.ui.page.MainFrame;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class UpdateHeaderPanel extends JPanel {
     public UpdateHeaderPanel() {
@@ -31,6 +34,13 @@ public class UpdateHeaderPanel extends JPanel {
         // 수정 완료 버튼
         JButton updateButton = new JButton("Apply Changes");
         updateButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+
+                MainFrame.getInstance().showPage("mypage");
+            }
+
             @Override
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 updateButton.setBackground(Color.LIGHT_GRAY);
