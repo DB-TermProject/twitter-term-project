@@ -23,7 +23,7 @@ public class TransactionManager {
                 return result;
             } catch (Exception e) {
                 rollback(connection);
-                throw new RuntimeException("Transaction failed: " + e.getMessage(), e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Database connection error: " + e.getMessage(), e);
@@ -37,7 +37,7 @@ public class TransactionManager {
                 connection.commit(); // 성공 시 커밋
             } catch (Exception e) {
                 rollback(connection);
-                throw new RuntimeException("Transaction failed", e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Database connection error", e);
@@ -49,7 +49,7 @@ public class TransactionManager {
             connection.setAutoCommit(true); // 읽기 전용 모드
             return callback.doInTransaction(connection);
         } catch (Exception e) {
-            throw new RuntimeException("Read-only transaction failed: " + e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
