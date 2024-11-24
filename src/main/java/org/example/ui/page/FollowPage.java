@@ -1,6 +1,15 @@
 package org.example.ui.page;
 
+import org.example.domain.follow.dto.FollowResDTO;
+import org.example.domain.follow.dto.FollowReqDTO;
+
+import org.example.domain.follow.usecase.*;
+
 import org.example.ui.component.button.RoundJButton;
+import org.example.ui.component.panel.NavigationPanel;
+
+
+import org.example.util.config.UserConfig;
 
 import java.awt.image.BufferedImage;
 import javax.swing.*;
@@ -17,24 +26,26 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import org.example.ui.component.panel.*;
-
 public class FollowPage extends JFrame {
+
+    private final FollowUseCase followUseCase = new FollowUseCase();
+    private final UserConfig userConfig = UserConfig.getInstance();
 
     private JLabel[] optionLabels;
     private JLabel followingCountLabel;
     private JLabel followerCountLabel;
-
     private JPanel innerPanel;
     private Connection connection;
     private List<String[]> followingUsers; // List to manage following users
     private List<String[]> recommendUsers;
 
+    public List<FollowResDTO.FollowSummary> readMyFollowings;
+
     public FollowPage(Connection connection) {
         // Store the connection for future database interactions
         this.connection = connection;
 
+        readMyFollowings = new ArrayList<>();
         // Initialize the following user list
         followingUsers = new ArrayList<>();
         followingUsers.add(new String[]{"User1", "(Company) Company1", "(Intro) Intro1", "src/main/java/org/example/asset/profile.png", "true", "true", "false",null});
@@ -58,16 +69,20 @@ public class FollowPage extends JFrame {
         recommendUsers.add(new String[]{"User17", "(Company) Company17", "(Intro) Intro17", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user7"});
         recommendUsers.add(new String[]{"User18", "(Company) Company18", "(Intro) Intro18", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user9"});
 
+
+        // Set up the frame
         setTitle("Follow Page");
         setSize(450, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());  // BorderLayout 사용
+        setLayout(null);
         getContentPane().setBackground(Color.WHITE);
+        setResizable(false);
+        setLocationRelativeTo(null);
 
         // Create the top panel
         JPanel topPanel = new JPanel();
         topPanel.setLayout(null);
-        topPanel.setBounds(0, 0, 400, 140);
+        topPanel.setBounds(0, 0, 450, 190);
         topPanel.setBackground(Color.WHITE);
         add(topPanel);
 
@@ -82,30 +97,30 @@ public class FollowPage extends JFrame {
             e.printStackTrace();
             logo.setText("●");
         }
-        logo.setBounds(30, 10, logoSize, logoSize);
+        logo.setBounds(30, 20, logoSize, logoSize);
         topPanel.add(logo);
 
         JLabel twitterLabel = new JLabel("Twitter");
         twitterLabel.setFont(new Font("마린 고딕", Font.PLAIN, 16));
-        twitterLabel.setBounds(30 + logoSize + 5, 10, 100, logoSize);
+        twitterLabel.setBounds(30 + logoSize + 5, 20, 100, logoSize);
         topPanel.add(twitterLabel);
 
         JLabel socialLabel = new JLabel("Social");
         socialLabel.setFont(new Font("마린 고딕", Font.BOLD, 18));
-        socialLabel.setBounds(30, 40, 100, 25);
+        socialLabel.setBounds(30, 60, 100, 25);
         topPanel.add(socialLabel);
 
         // Options for the top panel
         String[] options = {"Following", "Follower", "Recommend", "Send Request", "Received Request", "Block"};
         optionLabels = new JLabel[options.length];
         int x = 30;
-        int y = 80;
+        int y = 115;
 
         for (int i = 0; i < options.length; i++) {
             JLabel optionLabel = new JLabel(options[i]);
             optionLabel.setFont(new Font("마린 고딕", Font.PLAIN, 12));
             int adjustedX = x + (options[i].equals("Block") ? 20 : 0);
-            optionLabel.setBounds(adjustedX, y + (i < 3 ? 0 : 15), 100, 20);
+            optionLabel.setBounds(adjustedX, y + (i < 3 ? 0 : 25), 150, 20);
             optionLabel.setForeground(i == 0 ? Color.BLUE : Color.BLACK);
             optionLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -120,10 +135,10 @@ public class FollowPage extends JFrame {
 
             topPanel.add(optionLabel);
             optionLabels[i] = optionLabel;
-            x += 120;
+            x += 150;
             if (i == 2) {
                 x = 30;
-                y += 15;
+                y += 20;
             }
         }
 
@@ -145,12 +160,12 @@ public class FollowPage extends JFrame {
 
         // Inner panel without border inside the rounded panel
         innerPanel = new JPanel();
-        innerPanel.setBackground(Color.WHITE);
+        innerPanel.setBackground(Color.white);
         innerPanel.setLayout(new BorderLayout());
 
         // Wrap innerPanel in a JScrollPane
         JScrollPane scrollPane = new JScrollPane(innerPanel);
-        scrollPane.setBounds(10, 10, 295, 320); // Set bounds for scrollPane
+        scrollPane.setBounds(10, 10, 350, 350); // Set bounds for scrollPane
         scrollPane.setBorder(null); // Optional: Remove border for cleaner look
 
         // Set custom scroll bars to hide their appearance but keep functionality
@@ -160,11 +175,11 @@ public class FollowPage extends JFrame {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         // Set faster scrolling speed
-        scrollPane.getVerticalScrollBar().setUnitIncrement(5); // Adjust this value to make scrolling faster
+        scrollPane.getVerticalScrollBar().setUnitIncrement(7); // Adjust this value to make scrolling faster
 
         // Create the rounded panel and add the scrollPane to it
         RoundedPanel roundedPanel = new RoundedPanel();
-        roundedPanel.setBounds(30, 150, 315, 340);
+        roundedPanel.setBounds(30, 210, 370, 370);
         roundedPanel.setBackground(Color.white);
         roundedPanel.setLayout(null);
         roundedPanel.add(scrollPane); // Add scrollPane inside roundedPanel
@@ -177,30 +192,14 @@ public class FollowPage extends JFrame {
         switchPage(0);
 
         // Bottom navigation panel
-        JPanel bottomNavPanel = new JPanel();
-        bottomNavPanel.setLayout(new GridLayout(1, 4));
-        bottomNavPanel.setBounds(0, 510, 400, 50);
-        bottomNavPanel.setBackground(Color.WHITE);
-        bottomNavPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
 
-        // Add navigation icons
-        bottomNavPanel.add(createNavIcon("src/main/java/org/example/asset/home.png", 25, 25));
-        bottomNavPanel.add(createNavIcon("src/main/java/org/example/asset/follow.png", 25, 25));
-        bottomNavPanel.add(createNavIcon("src/main/java/org/example/asset/alarm.png", 25, 25));
-        bottomNavPanel.add(createNavIcon("src/main/java/org/example/asset/user.png", 25, 25));
 
-        add(bottomNavPanel);
 
-        setVisible(true);
-        // scrollPane의 크기와 위치 조정 (네비게이션 바를 위한 공간 확보)
-        scrollPane.setBounds(30, 150, 330, 425);  // 높이를 425로 수정
-
-        // 네비게이션 패널 추가
         NavigationPanel navigationPanel = new NavigationPanel(this, connection);
-        navigationPanel.setBounds(0, 610, 450, 40);  // 위치와 크기 설정
-        add(navigationPanel);
+        navigationPanel.setBounds(0, 610, 450, 60);  // 위치와 크기 설정
+        add(navigationPanel, BorderLayout.SOUTH);
 
-        setLocationRelativeTo(null);  // 화면 중앙에 표시
+
         setVisible(true);
     }
 
@@ -347,8 +346,8 @@ public class FollowPage extends JFrame {
     private JPanel createRecommendPanel(String[] user) {
         JPanel userPanel = new JPanel();
         userPanel.setLayout(new BorderLayout()); // Use BorderLayout for better alignment
-        userPanel.setPreferredSize(new Dimension(295, 80));
-        userPanel.setMaximumSize(new Dimension(295, 80)); // Ensure uniform size
+        userPanel.setPreferredSize(new Dimension(320, 85));
+        userPanel.setMaximumSize(new Dimension(320, 85)); // Ensure uniform size
         userPanel.setBackground(Color.WHITE);
 
         // Left side: Profile image
@@ -389,19 +388,19 @@ public class FollowPage extends JFrame {
         // Adjusted positions for name, affiliation, and introduction
         JLabel nameLabel = new JLabel(user[0]);
         nameLabel.setFont(new Font("마린 고딕", Font.BOLD, 12));
-        nameLabel.setBounds(10, 15, 200, 20); // Adjusted downward and closer to profile
+        nameLabel.setBounds(17, 15, 200, 20); // Adjusted downward and closer to profile
 
         JLabel affiliationLabel = new JLabel(user[1]);
         affiliationLabel.setFont(new Font("마린 고딕", Font.PLAIN, 10));
-        affiliationLabel.setBounds(10, 35, 200, 15); // Slightly lower position
+        affiliationLabel.setBounds(17, 35, 200, 15); // Slightly lower position
 
         JLabel introductionLabel = new JLabel(user[2]);
         introductionLabel.setFont(new Font("마린 고딕", Font.PLAIN, 10));
-        introductionLabel.setBounds(10, 50, 200, 15); // Slightly lower position
+        introductionLabel.setBounds(17, 50, 200, 15); // Slightly lower position
 
         JLabel related = new JLabel("Related to ("+user[7]+")");
         related.setFont(new Font("마린 고딕", Font.PLAIN, 9));
-        related.setBounds(55, 19, 200, 15); // Slightly lower position
+        related.setBounds(72, 19, 200, 15); // Slightly lower position
 
 
         centerPanel.add(nameLabel);
@@ -425,7 +424,7 @@ public class FollowPage extends JFrame {
         blockButton.setFocusPainted(false);
         blockButton.setBackground(new Color(135, 206, 250)); // 하늘색 팔로우버튼
         blockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-       // blockButton.setPreferredSize(new Dimension(80, 30));
+        // blockButton.setPreferredSize(new Dimension(80, 30));
 
 
 
@@ -463,8 +462,8 @@ public class FollowPage extends JFrame {
     private JPanel createUserPanel(String[] user) {
         JPanel userPanel = new JPanel();
         userPanel.setLayout(new BorderLayout()); // Use BorderLayout for better alignment
-        userPanel.setPreferredSize(new Dimension(295, 80));
-        userPanel.setMaximumSize(new Dimension(295, 80)); // Ensure uniform size
+        userPanel.setPreferredSize(new Dimension(320, 85));
+        userPanel.setMaximumSize(new Dimension(320, 85)); // Ensure uniform size
         userPanel.setBackground(Color.WHITE);
 
         // Left side: Profile image
@@ -505,15 +504,15 @@ public class FollowPage extends JFrame {
         // Adjusted positions for name, affiliation, and introduction
         JLabel nameLabel = new JLabel(user[0]);
         nameLabel.setFont(new Font("마린 고딕", Font.BOLD, 12));
-        nameLabel.setBounds(10, 15, 200, 20); // Adjusted downward and closer to profile
+        nameLabel.setBounds(17, 15, 200, 20); // Adjusted downward and closer to profile
 
         JLabel affiliationLabel = new JLabel(user[1]);
         affiliationLabel.setFont(new Font("마린 고딕", Font.PLAIN, 10));
-        affiliationLabel.setBounds(10, 35, 200, 15); // Slightly lower position
+        affiliationLabel.setBounds(17, 35, 200, 15); // Slightly lower position
 
         JLabel introductionLabel = new JLabel(user[2]);
         introductionLabel.setFont(new Font("마린 고딕", Font.PLAIN, 10));
-        introductionLabel.setBounds(10, 50, 200, 15); // Slightly lower position
+        introductionLabel.setBounds(17, 50, 200, 15); // Slightly lower position
 
 
 
@@ -542,12 +541,12 @@ public class FollowPage extends JFrame {
 
         RoundJButton followingButton = new RoundJButton("Following", 15,80,30);
 
-       // JButton followingButton = new JButton("Following");
+        // JButton followingButton = new JButton("Following");
         followingButton.setFont(new Font("마린 고딕", Font.PLAIN, 10));
         followingButton.setFocusPainted(false);
         followingButton.setBackground(Color.WHITE); // 유지 (white for Following)
         followingButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-       // followingButton.setPreferredSize(new Dimension(80, 30)); // Set preferred size for longer rounded button
+        // followingButton.setPreferredSize(new Dimension(80, 30)); // Set preferred size for longer rounded button
 
         if (user[4].equals("true")) {
             rightPanel.add(followingButton);
@@ -582,7 +581,7 @@ public class FollowPage extends JFrame {
         blockButton.setFocusPainted(false);
         blockButton.setBackground(new Color(255, 159, 159)); // 자몽색 for Unblock
         blockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-       // blockButton.setPreferredSize(new Dimension(80, 30));
+        // blockButton.setPreferredSize(new Dimension(80, 30));
 
         blockButton.addActionListener(e -> {
             followingUsers.remove(user); // 유저를 목록에서 제거
@@ -628,31 +627,6 @@ public class FollowPage extends JFrame {
 
     public void updateFollowerCount(int newCount) {
         followerCountLabel.setText(String.valueOf(newCount));
-    }
-
-
-
-    private JLabel createNavIcon(String imagePath, int width, int height) {
-        JLabel label = new JLabel();
-        try {
-            Image iconImage = ImageIO.read(new File(imagePath));
-            Image resizedImage = iconImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            label.setIcon(new ImageIcon(resizedImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-            label.setText("Icon");
-        }
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setVerticalAlignment(SwingConstants.CENTER);
-        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        label.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                System.out.println("Icon clicked: " + imagePath);
-            }
-        });
-
-        return label;
     }
 
     class RoundedPanel extends JPanel {
