@@ -8,9 +8,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
 
+import org.example.domain.user.dto.UserReqDTO;
+import org.example.domain.user.dto.UserResDTO;
+import org.example.domain.user.usecase.UserUseCase;
+import org.example.util.config.UserConfig;
+
+
 public class SignUpPage extends JFrame {
 
+    private final UserUseCase userUseCase = new UserUseCase();
+    private final UserConfig userConfig = UserConfig.getInstance();
+
     public SignUpPage(Connection con) {
+
 
 
         setTitle("Twitter Sign Up");
@@ -100,6 +110,16 @@ public class SignUpPage extends JFrame {
                 String email = emailField.getText();
                 String password = new String(passwordField.getPassword());
                 String name = nameField.getText();
+
+                try{
+
+                    userUseCase.signUp(new UserReqDTO.SignUp(email,password,name));
+
+
+                } catch (Exception ex){
+
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
 
                 // 필드가 비어 있는지 확인하는 조건 추가
                 if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
