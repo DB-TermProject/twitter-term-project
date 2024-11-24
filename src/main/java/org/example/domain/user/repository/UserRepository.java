@@ -3,14 +3,12 @@ package org.example.domain.user.repository;
 import org.example.domain.user.dto.UserReqDTO.Profile;
 import org.example.domain.user.dto.UserReqDTO.SignUp;
 import org.example.domain.user.dto.UserResDTO;
-import org.example.util.config.JdbcConfig;
 import org.example.util.exception.SqlExecutionException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
 
 public class UserRepository {
 
