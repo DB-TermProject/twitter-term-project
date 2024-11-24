@@ -9,25 +9,26 @@ public class InteractionLabel extends JPanel {
     private final JLabel iconLabel;
     private final JLabel countLabel;
     private final boolean[] isLiked = {false};  // 좋아요 상태 추적
-    private final JFrame parentFrame;
+    private final Component parentComponent;  // Changed from JFrame to Component
 
-    public InteractionLabel(String iconName, String count, JFrame parentFrame) {
-        this.parentFrame = parentFrame;
+
+
+    public InteractionLabel(String iconName, String count, Component parent) {
+        this.parentComponent = parent;  // Change field type to Component as well
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
         setBackground(Color.WHITE);
 
-        // 아이콘과 카운트 레이블 초기화
+        // Initialize icon and count labels
         iconLabel = createIconLabel(iconName);
         countLabel = createCountLabel(count);
 
-        // 이벤트 리스너 추가
+        // Add event listeners
         if (iconName.equals("heart.png")) {
             addHeartListener();
         } else if (iconName.equals("comment.png")) {
             addCommentListener();
         }
 
-        // 컴포넌트 추가
         add(iconLabel);
         add(countLabel);
     }
@@ -49,23 +50,20 @@ public class InteractionLabel extends JPanel {
         label.setForeground(Color.GRAY);
         return label;
     }
-
     private void addHeartListener() {
         MouseAdapter heartListener = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (!isLiked[0]) {
-                    // 좋아요를 누를 때
                     int currentCount = Integer.parseInt(countLabel.getText());
                     countLabel.setText(String.valueOf(currentCount + 1));
-                    countLabel.setForeground(new Color(249, 24, 128));  // 좋아요 색상
+                    countLabel.setForeground(new Color(249, 24, 128));
                     isLiked[0] = true;
                 } else {
-                    // 좋아요를 취소할 때
                     int currentCount = Integer.parseInt(countLabel.getText());
                     if (currentCount > 0) {
                         countLabel.setText(String.valueOf(currentCount - 1));
-                        countLabel.setForeground(Color.GRAY);  // 원래 색상으로 복귀
+                        countLabel.setForeground(Color.GRAY);
                         isLiked[0] = false;
                     }
                 }
@@ -73,12 +71,18 @@ public class InteractionLabel extends JPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                parentFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                Window window = SwingUtilities.getWindowAncestor(parentComponent);
+                if (window != null) {
+                    window.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                parentFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                Window window = SwingUtilities.getWindowAncestor(parentComponent);
+                if (window != null) {
+                    window.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
             }
         };
 
@@ -96,12 +100,12 @@ public class InteractionLabel extends JPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                parentFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                parentComponent.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                parentFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                parentComponent.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         };
 

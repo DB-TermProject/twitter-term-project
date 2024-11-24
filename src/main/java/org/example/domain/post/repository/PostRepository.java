@@ -16,11 +16,10 @@ import static org.example.domain.post.dto.PostResDTO.Detail.toDetail;
 
 public class PostRepository {
 
-    public void save(Long id, Save dto) {
+    public void save(Long id, Save dto, Connection connection) {
         String sql = "INSERT INTO post (content, writer_id) VALUES (?, ?)";
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, dto.content());
             statement.setLong(2, id);
@@ -31,24 +30,23 @@ public class PostRepository {
         }
     }
 
-    public List<Detail> findHomeFeed(Long id) {
+    public List<Detail> findHomeFeed(Long id, Connection connection) {
         String sql = """
-            SELECT p.id, p.content, p.like_count, p.comment_count, p.is_pinned,
-                   CASE 
-                       WHEN p.updated_at IS NOT NULL THEN p.updated_at 
-                       ELSE p.created_at 
-                   END AS created_at,
-                   u.name, u.profile_image_url, u.is_verified
-            FROM post p
-            JOIN follow f ON f.following_id = p.writer_id
-            JOIN user u ON u.id = f.following_id
-            WHERE f.follower_id = ? OR u.id = ?
-            ORDER BY created_at DESC
-            LIMIT 50
+           SELECT p.id, p.content, p.like_count, p.comment_count, p.is_pinned,
+                                   CASE
+                                       WHEN p.updated_at IS NOT NULL THEN p.updated_at
+                                       ELSE p.created_at
+                                       END AS created_at,
+                                   u.name, u.profile_image_url, u.is_verified
+                            FROM post p
+                                     JOIN user u ON u.id = p.writer_id
+                            WHERE u.id IN (SELECT following_id FROM follow WHERE follower_id = ?)
+                                    OR u.id = ?
+                            ORDER BY created_at DESC
+                            LIMIT 50
         """;
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setLong(1, id);
             statement.setLong(2, id);
@@ -99,7 +97,7 @@ public class PostRepository {
         }
     }
 
-    public Detail findPost(Long id) {
+    public Detail findPost(Long id, Connection connection) {
         String sql = """
             SELECT p.id, p.content, p.like_count, p.comment_count, p.is_pinned,
                    CASE 
@@ -114,13 +112,16 @@ public class PostRepository {
             LIMIT 50
         """;
 
-        try (Connection connection = JdbcConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setLong(1, id);
 
-            return toDetail(statement.executeQuery());
+            ResultSet resultSet = statement.executeQuery();
+            if(resultSet.next())
+                return toDetail(resultSet);
+            throw new SqlExecutionException();
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new SqlExecutionException();
         }
     }

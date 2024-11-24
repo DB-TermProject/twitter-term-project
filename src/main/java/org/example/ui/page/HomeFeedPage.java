@@ -1,82 +1,107 @@
 package org.example.ui.page;
 
-import org.example.domain.user.service.UserService;
-import org.example.ui.component.panel.*;
-import org.example.ui.component.label.ProfileLabel;  // 추가된 부분
+import org.example.domain.post.dto.PostResDTO;
+import org.example.domain.post.usecase.PostUseCase;
+import org.example.ui.component.label.ProfileLabel;
+import org.example.ui.component.panel.HeaderPanel;
+import org.example.ui.component.panel.TweetPanel;
+import org.example.util.config.UserConfig;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
-public class HomeFeedPage extends JFrame {
-    private final UserService userService;
+public class HomeFeedPage extends JPanel {
+    private static HomeFeedPage instance;
+    private final PostUseCase postUseCase = new PostUseCase();
     private final Connection connection;
-    private final FeedPanel feedPanel;
+    private final UserConfig userConfig = UserConfig.getInstance();
+    private List<PostResDTO.Detail> data = new ArrayList<>();
+    private JPanel feedPanel;
+    private JScrollPane scrollPane;
+    private JPanel centerPanel;
 
-    public HomeFeedPage(Connection connection) {
+    public static HomeFeedPage getInstance(Connection connection) {
+        if (instance == null) {
+            instance = new HomeFeedPage(connection);
+        }
+        return instance;
+    }
+
+    private HomeFeedPage(Connection connection) {
         this.connection = connection;
-        this.userService = new UserService();
-        initializeFrame();
-        this.feedPanel = new FeedPanel(connection, this);
-        createContent();
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
-
-    private void initializeFrame() {
-        setTitle("Twitter");
-        setSize(450, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);  // 창 크기 조절 불가능하도록 설정
         setBackground(Color.WHITE);
+        setLayout(new BorderLayout());
+        initializeComponents();
     }
 
-    private void createContent() {
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.WHITE);
-
+    private void initializeComponents() {
         // 헤더 패널
-        mainPanel.add(new HeaderPanel(connection), BorderLayout.NORTH);
+        add(new HeaderPanel(connection), BorderLayout.NORTH);
 
-        // 중앙 컨텐츠를 담을 패널
-        JPanel centerPanel = new JPanel(new BorderLayout());
+        // 중앙 패널 초기화
+        centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(Color.WHITE);
 
-        // 빠른 글쓰기 패널 (고정)
+        // 빠른 글쓰기 패널
         JPanel quickPostPanel = createQuickPostPanel();
         quickPostPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY),  // 하단 테두리
-                BorderFactory.createEmptyBorder(10, 20, 10, 20)  // 패딩
+                BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
         centerPanel.add(quickPostPanel, BorderLayout.NORTH);
 
-        // 피드 패널 (스크롤 가능)
-        JPanel feedPanel = new JPanel();
+        // 피드 패널 초기화
+        feedPanel = new JPanel();
         feedPanel.setLayout(new BoxLayout(feedPanel, BoxLayout.Y_AXIS));
         feedPanel.setBackground(Color.WHITE);
 
-        // 피드 아이템 추가
-        for (int i = 0; i < 9; i++) {
-            JPanel tweetPanel = new TweetPanel(connection, this);
-            tweetPanel.setMaximumSize(new Dimension(400, 150));
-            tweetPanel.setPreferredSize(new Dimension(400, 150));
-            feedPanel.add(tweetPanel);
-            feedPanel.add(Box.createVerticalStrut(1));
-        }
-
-        // 피드 패널만 스크롤 가능하도록 설정
-        JScrollPane scrollPane = new JScrollPane(feedPanel);
+        // 스크롤 패널 설정
+        scrollPane = new JScrollPane(feedPanel);
         scrollPane.setBorder(null);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         centerPanel.add(scrollPane, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+    }
 
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-        mainPanel.add(new NavigationPanel(this, connection), BorderLayout.SOUTH);
+    public void fetch(Long userId) {
+        SwingUtilities.invokeLater(() -> {
+            data.clear();
+            data.addAll(postUseCase.readHomeFeed(userId));
+            updateFeedPanel();
+        });
+    }
 
-        add(mainPanel);
+    private void updateFeedPanel() {
+        feedPanel.removeAll();
+
+        for (PostResDTO.Detail detail : data) {
+            JPanel tweetPanel = new TweetPanel(connection, MainFrame.getInstance(), detail);
+            tweetPanel.setMaximumSize(new Dimension(400, 150));
+            tweetPanel.setPreferredSize(new Dimension(400, 150));
+            tweetPanel.setMinimumSize(new Dimension(400, 150));
+
+            tweetPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    MainFrame mainFrame = MainFrame.getInstance();
+                    mainFrame.showTweetDetailPage(detail.id());
+                }
+            });
+
+            feedPanel.add(tweetPanel);
+            feedPanel.add(Box.createVerticalStrut(1));
+        }
+
+        feedPanel.revalidate();
+        feedPanel.repaint();
+        scrollPane.revalidate();
+        scrollPane.repaint();
     }
 
     private JPanel createQuickPostPanel() {
@@ -87,7 +112,6 @@ public class HomeFeedPage extends JFrame {
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
 
-        // 크기 설정 추가
         panel.setMaximumSize(new Dimension(400, 60));
         panel.setPreferredSize(new Dimension(400, 60));
 
@@ -109,20 +133,20 @@ public class HomeFeedPage extends JFrame {
         placeholderLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                dispose();
-                SwingUtilities.invokeLater(() -> new NewTweetPage(connection));
+                Window window = SwingUtilities.getWindowAncestor(HomeFeedPage.this);
+                if (window instanceof MainFrame) {
+                    ((MainFrame) window).showNewTweetPage();
+                }
             }
         });
 
         contentPanel.add(placeholderLabel, BorderLayout.CENTER);
         panel.add(contentPanel, BorderLayout.CENTER);
 
-        // 패널을 감싸는 컨테이너 추가
         JPanel containerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         containerPanel.setBackground(Color.WHITE);
         containerPanel.add(panel);
 
         return containerPanel;
     }
-
 }

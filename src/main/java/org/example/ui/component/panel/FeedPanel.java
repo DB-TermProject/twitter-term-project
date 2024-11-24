@@ -1,9 +1,12 @@
 package org.example.ui.component.panel;
 
+import org.example.domain.post.dto.PostResDTO;
 import org.example.ui.page.NewTweetPage;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
+import java.util.List;
+
 import org.example.ui.component.label.ProfileLabel;  // 추가된 부분
 
 
@@ -11,11 +14,13 @@ public class FeedPanel extends JPanel {
     private final Connection connection;
     private final JPanel mainFeedPanel;
     private final JFrame parentFrame;  // 상위 프레임 참조 추가
+    private final List<PostResDTO.Detail> data;
 
-    public FeedPanel(Connection connection, JFrame parentFrame) {  // 생성자 수정
+    public FeedPanel(Connection connection, JFrame parentFrame, List<PostResDTO.Detail> data) {  // 생성자 수정
         this.connection = connection;
         this.parentFrame = parentFrame;  // 상위 프레임 저장
         this.mainFeedPanel = new JPanel();
+        this.data = data;
         initializePanel();
     }
 
@@ -58,12 +63,13 @@ public class FeedPanel extends JPanel {
 
 
         // 기존 피드 목록 추가
-        for (int i = 0; i < 10; i++) {
-            JPanel tweetPanel = new TweetPanel(connection, parentFrame);
+        for (PostResDTO.Detail detail : data) {
+            JPanel tweetPanel = new TweetPanel(connection, parentFrame, detail);
             tweetPanel.setMaximumSize(new Dimension(400, 150));
             tweetPanel.setPreferredSize(new Dimension(400, 150));
             mainFeedPanel.add(tweetPanel);
             mainFeedPanel.add(Box.createVerticalStrut(1));
+
         }
     }
 
@@ -131,8 +137,8 @@ public class FeedPanel extends JPanel {
 
             if (feedCount > 0) {
                 // 기존 피드 목록 추가
-                for (int i = 0; i < 10; i++) {
-                    JPanel tweetPanel = new TweetPanel(connection, parentFrame);
+                for (PostResDTO.Detail detail : data) {
+                    JPanel tweetPanel = new TweetPanel(connection, parentFrame, detail);
                     tweetPanel.setMaximumSize(new Dimension(400, 150));
                     tweetPanel.setPreferredSize(new Dimension(400, 150));
                     mainFeedPanel.add(tweetPanel);

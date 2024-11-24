@@ -11,20 +11,18 @@ import java.awt.event.MouseEvent;
 public class InteractionPanel extends JPanel {
     private final JPanel commentPanel;
     private final JPanel heartPanel;
-    private final JFrame parentFrame;
-    private final boolean showCommentIcon;  // 댓글 아이콘 표시 여부
-    private ActionListener commentClickListener;
-    private boolean isLiked = false;  // 좋아요 상태 추적
+    private final Component parentComponent;  // JPanel 대신 Component 사용
+    private final boolean showCommentIcon;
+    private boolean isLiked = false;
 
-
-    // 기존 생성자
-    public InteractionPanel(JFrame parentFrame) {
-        this(parentFrame, true);  // 기본적으로 댓글 아이콘 표시
+    // 기본 생성자
+    public InteractionPanel(Component parentComponent) {
+        this(parentComponent, true);
     }
 
-    // 새로운 생성자: 댓글 아이콘 표시 여부를 선택할 수 있음
-    public InteractionPanel(JFrame parentFrame, boolean showCommentIcon) {
-        this.parentFrame = parentFrame;
+    // 메인 생성자
+    public InteractionPanel(Component parentComponent, boolean showCommentIcon) {
+        this.parentComponent = parentComponent;
         this.showCommentIcon = showCommentIcon;
         this.commentPanel = new JPanel();
         this.heartPanel = new JPanel();
@@ -33,41 +31,46 @@ public class InteractionPanel extends JPanel {
 
     private void initializePanel() {
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        setBackground(Color.white);
-        setName("interactionPanel");
+        setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(0, -5, 0, 0));
 
-        // 댓글 아이콘이 필요한 경우에만 추가
         if (showCommentIcon) {
-            commentPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-            commentPanel.setBackground(Color.white);
-            commentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 50));  // 간격 조정
-            InteractionLabel commentLabel = new InteractionLabel("comment.png", "0", parentFrame);
-            commentPanel.add(commentLabel);
-            add(commentPanel);
+            setupCommentPanel();
         }
+        setupHeartPanel();
+    }
 
-        // 하트 패널 설정
+    private void setupCommentPanel() {
+        commentPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        commentPanel.setBackground(Color.WHITE);
+        commentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 50));
+
+        InteractionLabel commentLabel = new InteractionLabel("comment.png", "0", parentComponent);
+        commentPanel.add(commentLabel);
+        add(commentPanel);
+    }
+
+    private void setupHeartPanel() {
         heartPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
         heartPanel.setBackground(Color.WHITE);
-        InteractionLabel heartLabel = new InteractionLabel("heart.png", "0", parentFrame);
+
+        InteractionLabel heartLabel = new InteractionLabel("heart.png", "0", parentComponent);
         heartPanel.add(heartLabel);
         add(heartPanel);
     }
 
-
-
     public void setCommentCount(String count) {
-        updateCount(commentPanel, count);
+        if (showCommentIcon) {
+            updateLabelCount(commentPanel, count);
+        }
     }
 
     public void setLikeCount(String count) {
-        updateCount(heartPanel, count);
+        updateLabelCount(heartPanel, count);
     }
 
-    private void updateCount(JPanel panel, String count) {
-        Component[] components = panel.getComponents();
-        for (Component component : components) {
+    private void updateLabelCount(JPanel panel, String count) {
+        for (Component component : panel.getComponents()) {
             if (component instanceof InteractionLabel) {
                 ((InteractionLabel) component).setCount(count);
                 break;
@@ -76,26 +79,24 @@ public class InteractionPanel extends JPanel {
     }
 
     public String getCommentCount() {
-        return getCount(commentPanel);
+        return showCommentIcon ? getLabelCount(commentPanel) : "0";
     }
 
     public String getLikeCount() {
-        return getCount(heartPanel);
+        return getLabelCount(heartPanel);
     }
 
-    private String getCount(JPanel panel) {
-        Component[] components = panel.getComponents();
-        for (Component component : components) {
+    private String getLabelCount(JPanel panel) {
+        for (Component component : panel.getComponents()) {
             if (component instanceof InteractionLabel) {
-                return String.valueOf(((InteractionLabel) component).getCount());
+                return ((InteractionLabel) component).getCount();
             }
         }
         return "0";
     }
 
     public boolean isLiked() {
-        Component[] components = heartPanel.getComponents();
-        for (Component component : components) {
+        for (Component component : heartPanel.getComponents()) {
             if (component instanceof InteractionLabel) {
                 return ((InteractionLabel) component).isLiked();
             }
@@ -104,8 +105,9 @@ public class InteractionPanel extends JPanel {
     }
 
     public void addCommentClickListener(ActionListener listener) {
-        Component[] components = commentPanel.getComponents();
-        for (Component comp : components) {
+        if (!showCommentIcon) return;
+
+        for (Component comp : commentPanel.getComponents()) {
             if (comp instanceof InteractionLabel) {
                 InteractionLabel label = (InteractionLabel) comp;
                 label.addMouseListener(new MouseAdapter() {
@@ -117,25 +119,15 @@ public class InteractionPanel extends JPanel {
 
                     @Override
                     public void mouseEntered(MouseEvent e) {
-                        setCursorHand();
+                        setCursor(new Cursor(Cursor.HAND_CURSOR));
                     }
 
                     @Override
                     public void mouseExited(MouseEvent e) {
-                        setCursorDefault();
+                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     }
                 });
             }
         }
     }
-
-    public void setCursorHand() {
-        setCursor(new Cursor(Cursor.HAND_CURSOR));
-    }
-
-    public void setCursorDefault() {
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-    }
-
-
 }

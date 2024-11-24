@@ -1,208 +1,87 @@
 package org.example.ui.page;
 
-import org.example.domain.follow.dto.FollowResDTO;
-import org.example.domain.follow.dto.FollowReqDTO;
-
-import org.example.domain.follow.usecase.*;
-
 import org.example.ui.component.button.RoundJButton;
-import org.example.ui.component.panel.NavigationPanel;
+import org.example.ui.component.panel.HeaderPanel;
 
-
-import org.example.util.config.UserConfig;
-
-import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FollowPage extends JFrame {
-
-    private final FollowUseCase followUseCase = new FollowUseCase();
-    private final UserConfig userConfig = UserConfig.getInstance();
-
+public class FollowPage extends JPanel {
     private JLabel[] optionLabels;
     private JLabel followingCountLabel;
     private JLabel followerCountLabel;
-    private JPanel innerPanel;
+    private RoundedPanel contentPanel;
+    private JScrollPane scrollPane;
+    private List<String[]> followingUsers;
     private Connection connection;
-    private List<String[]> followingUsers; // List to manage following users
+    private int followerCount = 7;
     private List<String[]> recommendUsers;
 
-    public List<FollowResDTO.FollowSummary> readMyFollowings;
-
     public FollowPage(Connection connection) {
-        // Store the connection for future database interactions
         this.connection = connection;
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
 
-        readMyFollowings = new ArrayList<>();
-        // Initialize the following user list
-        followingUsers = new ArrayList<>();
-        followingUsers.add(new String[]{"User1", "(Company) Company1", "(Intro) Intro1", "src/main/java/org/example/asset/profile.png", "true", "true", "false",null});
-        followingUsers.add(new String[]{"User2", "(Company) Company2", "(Intro) Intro2", "src/main/java/org/example/asset/profile.png", "false", "true", "true",null});
-        followingUsers.add(new String[]{"User3", "(Company) Company3", "(Intro) Intro3", "src/main/java/org/example/asset/profile.png", "true", "false", "false",null});
-        followingUsers.add(new String[]{"User4", "(Company) Company4", "(Intro) Intro4", "src/main/java/org/example/asset/profile.png", "true", "true", "false",null});
-        followingUsers.add(new String[]{"User5", "(Company) Company5", "(Intro) Intro5", "src/main/java/org/example/asset/profile.png", "false", "false", "true",null});
-        followingUsers.add(new String[]{"User6", "(Company) Company6", "(Intro) Intro6", "src/main/java/org/example/asset/profile.png", "true", "true", "false",null});
-        followingUsers.add(new String[]{"User7", "(Company) Company7", "(Intro) Intro7", "src/main/java/org/example/asset/profile.png", "true", "false", "false",null});
-        followingUsers.add(new String[]{"User8", "(Company) Company8", "(Intro) Intro8", "src/main/java/org/example/asset/profile.png", "false", "true", "false",null});
-        followingUsers.add(new String[]{"User9", "(Company) Company9", "(Intro) Intro9", "src/main/java/org/example/asset/profile.png", "true", "false", "false",null});
-        followingUsers.add(new String[]{"User10", "(Company) Company10", "(Intro) Intro10", "src/main/java/org/example/asset/profile.png", "false", "true", "true",null});
-        followingUsers.add(new String[]{"User11", "(Company) Company11", "(Intro) Intro11", "src/main/java/org/example/asset/profile.png", "true", "true", "false",null});
-        followingUsers.add(new String[]{"User12", "(Company) Company12", "(Intro) Intro12", "src/main/java/org/example/asset/profile.png", "true", "false", "true",null});
+        // Initialize following users list with sample data
+        initializeFollowingUsers();
 
-        recommendUsers = new ArrayList<>();
-        recommendUsers.add(new String[]{"User13", "(Company) Company13", "(Intro) Intro13", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user1"});
-        recommendUsers.add(new String[]{"User14", "(Company) Company14", "(Intro) Intro14", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user3"});
-        recommendUsers.add(new String[]{"User15", "(Company) Company15", "(Intro) Intro15", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user4"});
-        recommendUsers.add(new String[]{"User16", "(Company) Company16", "(Intro) Intro16", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user6"});
-        recommendUsers.add(new String[]{"User17", "(Company) Company17", "(Intro) Intro17", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user7"});
-        recommendUsers.add(new String[]{"User18", "(Company) Company18", "(Intro) Intro18", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user9"});
+        // 메인 패널 생성
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBackground(Color.WHITE);
 
+        // 헤더 패널 추가
+        HeaderPanel headerPanel = new HeaderPanel(connection);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // Set up the frame
-        setTitle("Follow Page");
-        setSize(450, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
-        getContentPane().setBackground(Color.WHITE);
-        setResizable(false);
-        setLocationRelativeTo(null);
+        // 컨텐츠를 담을 패널 생성
+        JPanel contentContainer = new JPanel();
+        contentContainer.setLayout(new BorderLayout());
+        contentContainer.setBackground(Color.WHITE);
 
-        // Create the top panel
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(null);
-        topPanel.setBounds(0, 0, 450, 190);
-        topPanel.setBackground(Color.WHITE);
-        add(topPanel);
+        // 상단 패널 (Social 섹션과 옵션들)
+        JPanel topPanel = createTopPanel();
+        contentContainer.add(topPanel, BorderLayout.NORTH);
 
-        // Load and resize the Twitter logo image
-        JLabel logo = new JLabel();
-        int logoSize = 24;
-        try {
-            Image twitterImage = ImageIO.read(new File("src/main/java/org/example/asset/twitter.png"));
-            Image resizedImage = twitterImage.getScaledInstance(logoSize, logoSize, Image.SCALE_SMOOTH);
-            logo.setIcon(new ImageIcon(resizedImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-            logo.setText("●");
-        }
-        logo.setBounds(30, 20, logoSize, logoSize);
-        topPanel.add(logo);
+        // 컨텐츠 패널 (스크롤 영역)
+        contentPanel = new RoundedPanel();
+        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        JLabel twitterLabel = new JLabel("Twitter");
-        twitterLabel.setFont(new Font("마린 고딕", Font.PLAIN, 16));
-        twitterLabel.setBounds(30 + logoSize + 5, 20, 100, logoSize);
-        topPanel.add(twitterLabel);
-
-        JLabel socialLabel = new JLabel("Social");
-        socialLabel.setFont(new Font("마린 고딕", Font.BOLD, 18));
-        socialLabel.setBounds(30, 60, 100, 25);
-        topPanel.add(socialLabel);
-
-        // Options for the top panel
-        String[] options = {"Following", "Follower", "Recommend", "Send Request", "Received Request", "Block"};
-        optionLabels = new JLabel[options.length];
-        int x = 30;
-        int y = 115;
-
-        for (int i = 0; i < options.length; i++) {
-            JLabel optionLabel = new JLabel(options[i]);
-            optionLabel.setFont(new Font("마린 고딕", Font.PLAIN, 12));
-            int adjustedX = x + (options[i].equals("Block") ? 20 : 0);
-            optionLabel.setBounds(adjustedX, y + (i < 3 ? 0 : 25), 150, 20);
-            optionLabel.setForeground(i == 0 ? Color.BLUE : Color.BLACK);
-            optionLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-            final int index = i;
-            optionLabel.addMouseListener(new MouseInputAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    setActiveOption(index);
-                    switchPage(index);
-                }
-            });
-
-            topPanel.add(optionLabel);
-            optionLabels[i] = optionLabel;
-            x += 150;
-            if (i == 2) {
-                x = 30;
-                y += 20;
-            }
-        }
-
-        setActiveOption(0);
-
-        // Following count label next to the "Following" option
-        followingCountLabel = new JLabel("0"); // Initial count set to 0
-        followingCountLabel.setFont(new Font("마린 고딕", Font.PLAIN, 12));
-        followingCountLabel.setForeground(Color.BLACK);
-        followingCountLabel.setBounds(optionLabels[0].getX() + 65, optionLabels[0].getY() + 1, 50, 20); // Positioned close to "Following"
-        topPanel.add(followingCountLabel);
-
-        // Follower count label next to the "Follower" option
-        followerCountLabel = new JLabel("0"); // Initial count set to 0
-        followerCountLabel.setFont(new Font("마린 고딕", Font.PLAIN, 12));
-        followerCountLabel.setForeground(Color.BLACK);
-        followerCountLabel.setBounds(optionLabels[1].getX() + 60, optionLabels[1].getY() + 1, 50, 20); // Positioned close to "Follower"
-        topPanel.add(followerCountLabel);
-
-        // Inner panel without border inside the rounded panel
-        innerPanel = new JPanel();
-        innerPanel.setBackground(Color.white);
-        innerPanel.setLayout(new BorderLayout());
-
-        // Wrap innerPanel in a JScrollPane
-        JScrollPane scrollPane = new JScrollPane(innerPanel);
-        scrollPane.setBounds(10, 10, 350, 350); // Set bounds for scrollPane
-        scrollPane.setBorder(null); // Optional: Remove border for cleaner look
-
-        // Set custom scroll bars to hide their appearance but keep functionality
-        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
-        scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 0));
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        // 스크롤 패널 설정
+        scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBorder(null);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        // 스크롤 패널 설정 시 항상 세로 스크롤바 공간 확보
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        // Set faster scrolling speed
-        scrollPane.getVerticalScrollBar().setUnitIncrement(7); // Adjust this value to make scrolling faster
+        // 스크롤 패널을 감싸는 패널
+        JPanel scrollWrapper = new JPanel(new BorderLayout());
+        scrollWrapper.setBackground(Color.WHITE);
+        scrollWrapper.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
+        scrollWrapper.add(scrollPane);
 
-        // Create the rounded panel and add the scrollPane to it
-        RoundedPanel roundedPanel = new RoundedPanel();
-        roundedPanel.setBounds(30, 210, 370, 370);
-        roundedPanel.setBackground(Color.white);
-        roundedPanel.setLayout(null);
-        roundedPanel.add(scrollPane); // Add scrollPane inside roundedPanel
+        contentContainer.add(scrollWrapper, BorderLayout.CENTER);
+        mainPanel.add(contentContainer, BorderLayout.CENTER);
+        add(mainPanel);
 
-        add(roundedPanel);
-
-        // Default content for "Following"
-        updateFollowingCount((int) followingUsers.stream().filter(user -> user[6].equals("false")&&user[4].equals("true")).count());
-        updateFollowerCount((int) followingUsers.stream().filter(user -> user[6].equals("false")&&user[5].equals("true")).count());
+        // 초기 페이지 설정
+        setActiveOption(0);
         switchPage(0);
-
-        // Bottom navigation panel
-
-
-
-        NavigationPanel navigationPanel = new NavigationPanel(this, connection);
-        navigationPanel.setBounds(0, 610, 450, 60);  // 위치와 크기 설정
-        add(navigationPanel, BorderLayout.SOUTH);
-
-
-        setVisible(true);
     }
-
     private void setActiveOption(int index) {
         for (JLabel label : optionLabels) {
             label.setForeground(Color.BLACK);
@@ -211,143 +90,97 @@ public class FollowPage extends JFrame {
     }
 
     private void switchPage(int index) {
-        innerPanel.removeAll();
-
-        if (index == 0) { // "Following" page content
-            innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS)); // Set vertical alignment
-
+        contentPanel.removeAll();
+        if (index == 0) {  // Following page
+            contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
             for (String[] user : followingUsers) {
                 if (user[6].equals("true")) {
                     // 차단된 유저의 팔로우 상태와 팔로워 상태를 false로 설정
-                    user[4] = "false"; // 팔로우 상태 초기화
-                    user[5] = "false"; // 팔로워 상태 초기화
+                    user[4] = "false";  // 팔로우 상태 초기화
+                    user[5] = "false";  // 팔로워 상태 초기화
                 }
-
                 if (user[4].equals("true")) {
                     JPanel userPanel = createUserPanel(user);
-                    innerPanel.add(userPanel); // Add user panel to innerPanel
-
-
-
+                    contentPanel.add(userPanel);
                 }
             }
-        } else if (index == 1) { // "Follower" page content
-            innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS)); // Set vertical alignment
-
+        } else if (index == 1) {  // Follower page
+            contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
             for (String[] user : followingUsers) {
                 if (user[5].equals("true")) {
                     JPanel userPanel = createUserPanel(user);
-                    innerPanel.add(userPanel); // Add user panel to innerPanel
-
-
-
+                    contentPanel.add(userPanel);
                 }
             }
-        }
-        else if(index==2){
-            innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
+        } else if (index == 2) {  // Recommend page
+            contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
             for (String[] user : recommendUsers) {
                 if (user[4].equals("false")) {
                     JPanel userPanel = createRecommendPanel(user);
-                    innerPanel.add(userPanel); // Add user panel to innerPanel
-
-
-
+                    contentPanel.add(userPanel);
                 }
             }
-
-        }
-        else if (index == 3) { // "Send Request" page content
-            innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS)); // Set vertical alignment
-
+        } else if (index == 3) {  // Send Request page
+            contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
             for (String[] user : followingUsers) {
                 if (user[4].equals("true") && user[5].equals("false")) {
                     JPanel userPanel = createUserPanel(user);
-
-                    // 여기서 버튼 텍스트를 "Cancel"로 설정합니다.
                     JButton followButton = (JButton) ((JPanel) userPanel.getComponent(2)).getComponent(0);
                     followButton.setText("Cancel");
                     followButton.setBackground(new Color(255, 159, 159));
-
-                    innerPanel.add(userPanel); // Add user panel to innerPanel
-
-
+                    contentPanel.add(userPanel);
                 }
             }
-        }
-
-        else if (index == 4) { // "Received Request" page content
-            innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS)); // Set vertical alignment
-
+        } else if (index == 4) {  // Received Request page
+            contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
             for (String[] user : followingUsers) {
                 if (user[4].equals("false") && user[5].equals("true")) {
                     JPanel userPanel = createUserPanel(user);
-
-                    // 여기서 버튼 텍스트를 "Accept"로 설정합니다.
                     JButton followButton = (JButton) ((JPanel) userPanel.getComponent(2)).getComponent(0);
                     followButton.setText("Accept");
                     followButton.setBackground(new Color(135, 206, 250));
-
-
-
-                    innerPanel.add(userPanel); // Add user panel to innerPanel
-
-
+                    contentPanel.add(userPanel);
                 }
             }
-        }
-        else if (index == 5) { // "Block" page content
-            innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS)); // Set vertical alignment
-
+        } else if (index == 5) {  // Block page
+            contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
             for (String[] user : followingUsers) {
-                if (user[6].equals("true")) { // 차단된 유저만 표시
+                if (user[6].equals("true")) {
                     JPanel userPanel = createUserPanel(user);
-
-                    // Unblock 버튼 추가 및 설정
-                    RoundJButton unblockButton = new RoundJButton("Unblock", 15,80,30);
-
-                    //JButton blockButton = new JButton("Unblock");
+                    RoundJButton unblockButton = new RoundJButton("Unblock", 15, 80, 30);
                     unblockButton.setFont(new Font("마린 고딕", Font.PLAIN, 10));
                     unblockButton.setFocusPainted(false);
-                    unblockButton.setBackground(new Color(255, 159, 159)); // 자몽색 for Unblock
+                    unblockButton.setBackground(new Color(255, 159, 159));
                     unblockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-                    // blockButton.setPreferredSize(new Dimension(80, 30));
 
-                    // Unblock 버튼 액션 리스너 추가
                     unblockButton.addActionListener(e -> {
-                        user[6] = "false"; // 차단 해제
-                        switchPage(5); // Block 페이지 다시 로드하여 UI 업데이트
+                        user[6] = "false";  // 차단 해제
+                        switchPage(5);  // Block 페이지 다시 로드하여 UI 업데이트
                     });
 
-                    JPanel rightPanel = (JPanel) userPanel.getComponent(2); // Right panel 가져오기
-                    rightPanel.removeAll(); // 기존 버튼 제거
-                    rightPanel.add(unblockButton); // Unblock 버튼 추가
+                    JPanel rightPanel = (JPanel) userPanel.getComponent(2);
+                    rightPanel.removeAll();
+                    rightPanel.add(unblockButton);
                     rightPanel.revalidate();
                     rightPanel.repaint();
-
-                    innerPanel.add(userPanel); // Add user panel to innerPanel
-
-
+                    contentPanel.add(userPanel);
                 }
             }
-        }
-
-        else {
+        } else {
             JLabel contentLabel = new JLabel();
             contentLabel.setHorizontalAlignment(SwingConstants.CENTER);
             contentLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
             contentLabel.setText(getPageContentText(index));
-            innerPanel.add(contentLabel, BorderLayout.CENTER);
+            contentPanel.add(contentLabel, BorderLayout.CENTER);
         }
-
-        innerPanel.revalidate();
-        innerPanel.repaint();
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
     private JPanel createRecommendPanel(String[] user) {
         JPanel userPanel = new JPanel();
         userPanel.setLayout(new BorderLayout()); // Use BorderLayout for better alignment
-        userPanel.setPreferredSize(new Dimension(320, 85));
-        userPanel.setMaximumSize(new Dimension(320, 85)); // Ensure uniform size
+        userPanel.setPreferredSize(new Dimension(295, 80));
+        userPanel.setMaximumSize(new Dimension(295, 80)); // Ensure uniform size
         userPanel.setBackground(Color.WHITE);
 
         // Left side: Profile image
@@ -388,19 +221,19 @@ public class FollowPage extends JFrame {
         // Adjusted positions for name, affiliation, and introduction
         JLabel nameLabel = new JLabel(user[0]);
         nameLabel.setFont(new Font("마린 고딕", Font.BOLD, 12));
-        nameLabel.setBounds(17, 15, 200, 20); // Adjusted downward and closer to profile
+        nameLabel.setBounds(10, 15, 200, 20); // Adjusted downward and closer to profile
 
         JLabel affiliationLabel = new JLabel(user[1]);
         affiliationLabel.setFont(new Font("마린 고딕", Font.PLAIN, 10));
-        affiliationLabel.setBounds(17, 35, 200, 15); // Slightly lower position
+        affiliationLabel.setBounds(10, 35, 200, 15); // Slightly lower position
 
         JLabel introductionLabel = new JLabel(user[2]);
         introductionLabel.setFont(new Font("마린 고딕", Font.PLAIN, 10));
-        introductionLabel.setBounds(17, 50, 200, 15); // Slightly lower position
+        introductionLabel.setBounds(10, 50, 200, 15); // Slightly lower position
 
         JLabel related = new JLabel("Related to ("+user[7]+")");
         related.setFont(new Font("마린 고딕", Font.PLAIN, 9));
-        related.setBounds(72, 19, 200, 15); // Slightly lower position
+        related.setBounds(55, 19, 200, 15); // Slightly lower position
 
 
         centerPanel.add(nameLabel);
@@ -424,15 +257,15 @@ public class FollowPage extends JFrame {
         blockButton.setFocusPainted(false);
         blockButton.setBackground(new Color(135, 206, 250)); // 하늘색 팔로우버튼
         blockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        // blockButton.setPreferredSize(new Dimension(80, 30));
+       // blockButton.setPreferredSize(new Dimension(80, 30));
 
 
 
         blockButton.addActionListener(e -> {
             recommendUsers.remove(user); // 유저를 목록에서 제거
-            innerPanel.remove(userPanel); // UI에서도 제거
-            innerPanel.revalidate();
-            innerPanel.repaint();
+            contentPanel.remove(userPanel); // UI에서도 제거 (innerPanel을 contentPanel로 변경)
+            contentPanel.revalidate();
+            contentPanel.repaint();
             user[4] = "true"; // 팔로우 상태 초기화
             user[5] = "false"; // 팔로워 상태 초기화
             user[7] = null;
@@ -440,9 +273,7 @@ public class FollowPage extends JFrame {
             rightPanel.repaint();
             followingUsers.add(user);
             recommendUsers.remove(user);
-
             updateFollowingCount((int) followingUsers.stream().filter(u -> u[4].equals("true")).count());
-
             switchPage(2); // Block 페이지로 다시 전환하여 UI를 업데이트
         });
 
@@ -462,8 +293,8 @@ public class FollowPage extends JFrame {
     private JPanel createUserPanel(String[] user) {
         JPanel userPanel = new JPanel();
         userPanel.setLayout(new BorderLayout()); // Use BorderLayout for better alignment
-        userPanel.setPreferredSize(new Dimension(320, 85));
-        userPanel.setMaximumSize(new Dimension(320, 85)); // Ensure uniform size
+        userPanel.setPreferredSize(new Dimension(295, 80));
+        userPanel.setMaximumSize(new Dimension(295, 80)); // Ensure uniform size
         userPanel.setBackground(Color.WHITE);
 
         // Left side: Profile image
@@ -504,15 +335,15 @@ public class FollowPage extends JFrame {
         // Adjusted positions for name, affiliation, and introduction
         JLabel nameLabel = new JLabel(user[0]);
         nameLabel.setFont(new Font("마린 고딕", Font.BOLD, 12));
-        nameLabel.setBounds(17, 15, 200, 20); // Adjusted downward and closer to profile
+        nameLabel.setBounds(10, 15, 200, 20); // Adjusted downward and closer to profile
 
         JLabel affiliationLabel = new JLabel(user[1]);
         affiliationLabel.setFont(new Font("마린 고딕", Font.PLAIN, 10));
-        affiliationLabel.setBounds(17, 35, 200, 15); // Slightly lower position
+        affiliationLabel.setBounds(10, 35, 200, 15); // Slightly lower position
 
         JLabel introductionLabel = new JLabel(user[2]);
         introductionLabel.setFont(new Font("마린 고딕", Font.PLAIN, 10));
-        introductionLabel.setBounds(17, 50, 200, 15); // Slightly lower position
+        introductionLabel.setBounds(10, 50, 200, 15); // Slightly lower position
 
 
 
@@ -541,12 +372,12 @@ public class FollowPage extends JFrame {
 
         RoundJButton followingButton = new RoundJButton("Following", 15,80,30);
 
-        // JButton followingButton = new JButton("Following");
+       // JButton followingButton = new JButton("Following");
         followingButton.setFont(new Font("마린 고딕", Font.PLAIN, 10));
         followingButton.setFocusPainted(false);
         followingButton.setBackground(Color.WHITE); // 유지 (white for Following)
         followingButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        // followingButton.setPreferredSize(new Dimension(80, 30)); // Set preferred size for longer rounded button
+       // followingButton.setPreferredSize(new Dimension(80, 30)); // Set preferred size for longer rounded button
 
         if (user[4].equals("true")) {
             rightPanel.add(followingButton);
@@ -581,13 +412,13 @@ public class FollowPage extends JFrame {
         blockButton.setFocusPainted(false);
         blockButton.setBackground(new Color(255, 159, 159)); // 자몽색 for Unblock
         blockButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        // blockButton.setPreferredSize(new Dimension(80, 30));
+       // blockButton.setPreferredSize(new Dimension(80, 30));
 
         blockButton.addActionListener(e -> {
             followingUsers.remove(user); // 유저를 목록에서 제거
-            innerPanel.remove(userPanel); // UI에서도 제거
-            innerPanel.revalidate();
-            innerPanel.repaint();
+            contentPanel.remove(userPanel); // innerPanel을 contentPanel로 변경
+            contentPanel.revalidate();
+            contentPanel.repaint();
         });
         blockButton.addActionListener(e -> {
             user[6] = "true"; // 사용자 차단 상태로 업데이트
@@ -629,6 +460,31 @@ public class FollowPage extends JFrame {
         followerCountLabel.setText(String.valueOf(newCount));
     }
 
+
+
+    private JLabel createNavIcon(String imagePath, int width, int height) {
+        JLabel label = new JLabel();
+        try {
+            Image iconImage = ImageIO.read(new File(imagePath));
+            Image resizedImage = iconImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            label.setIcon(new ImageIcon(resizedImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+            label.setText("Icon");
+        }
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setVerticalAlignment(SwingConstants.CENTER);
+        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        label.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("Icon clicked: " + imagePath);
+            }
+        });
+
+        return label;
+    }
+
     class RoundedPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
@@ -643,6 +499,89 @@ public class FollowPage extends JFrame {
             g2.setStroke(new BasicStroke(2));
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 30, 30);
         }
+    }
+
+    private void initializeFollowingUsers() {
+        // User 객체 생성 부분 제거
+        followingUsers = new ArrayList<>();
+        followingUsers.add(new String[]{"User1", "(Company) Company1", "(Intro) Intro1", "src/main/java/org/example/asset/profile.png", "true", "true", "false",null});
+        followingUsers.add(new String[]{"User2", "(Company) Company2", "(Intro) Intro2", "src/main/java/org/example/asset/profile.png", "false", "true", "true",null});
+        followingUsers.add(new String[]{"User3", "(Company) Company3", "(Intro) Intro3", "src/main/java/org/example/asset/profile.png", "true", "false", "false",null});
+        followingUsers.add(new String[]{"User4", "(Company) Company4", "(Intro) Intro4", "src/main/java/org/example/asset/profile.png", "true", "true", "false",null});
+        followingUsers.add(new String[]{"User5", "(Company) Company5", "(Intro) Intro5", "src/main/java/org/example/asset/profile.png", "false", "false", "true",null});
+        followingUsers.add(new String[]{"User6", "(Company) Company6", "(Intro) Intro6", "src/main/java/org/example/asset/profile.png", "true", "true", "false",null});
+        followingUsers.add(new String[]{"User7", "(Company) Company7", "(Intro) Intro7", "src/main/java/org/example/asset/profile.png", "true", "false", "false",null});
+        followingUsers.add(new String[]{"User8", "(Company) Company8", "(Intro) Intro8", "src/main/java/org/example/asset/profile.png", "false", "true", "false",null});
+        followingUsers.add(new String[]{"User9", "(Company) Company9", "(Intro) Intro9", "src/main/java/org/example/asset/profile.png", "true", "false", "false",null});
+        followingUsers.add(new String[]{"User10", "(Company) Company10", "(Intro) Intro10", "src/main/java/org/example/asset/profile.png", "false", "true", "true",null});
+        followingUsers.add(new String[]{"User11", "(Company) Company11", "(Intro) Intro11", "src/main/java/org/example/asset/profile.png", "true", "true", "false",null});
+        followingUsers.add(new String[]{"User12", "(Company) Company12", "(Intro) Intro12", "src/main/java/org/example/asset/profile.png", "true", "false", "true",null});
+
+        recommendUsers = new ArrayList<>();
+        recommendUsers.add(new String[]{"User13", "(Company) Company13", "(Intro) Intro13", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user1"});
+        recommendUsers.add(new String[]{"User14", "(Company) Company14", "(Intro) Intro14", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user3"});
+        recommendUsers.add(new String[]{"User15", "(Company) Company15", "(Intro) Intro15", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user4"});
+        recommendUsers.add(new String[]{"User16", "(Company) Company16", "(Intro) Intro16", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user6"});
+        recommendUsers.add(new String[]{"User17", "(Company) Company17", "(Intro) Intro17", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user7"});
+        recommendUsers.add(new String[]{"User18", "(Company) Company18", "(Intro) Intro18", "src/main/java/org/example/asset/profile.png", "false", "false", "false","user9"});
+
+    }
+
+    private JPanel createTopPanel() {
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(null);
+        topPanel.setPreferredSize(new Dimension(450, 120));
+        topPanel.setBackground(Color.WHITE);
+
+        JLabel socialLabel = new JLabel("Social");
+        socialLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        socialLabel.setBounds(30, 20, 100, 20);
+        topPanel.add(socialLabel);
+
+        String[] options = {"Following", "Follower", "Recommend", "Send Request", "Received Request", "Block"};
+        optionLabels = new JLabel[options.length];
+        int x = 30;
+        int y = 50;
+
+        for (int i = 0; i < options.length; i++) {
+            JLabel optionLabel = new JLabel(options[i]);
+            optionLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            int adjustedX = x + (options[i].equals("Block") ? 20 : 0);
+            optionLabel.setBounds(adjustedX, y + (i < 3 ? 0 : 15), 100, 20);
+            optionLabel.setForeground(i == 0 ? Color.BLUE : Color.BLACK);
+            optionLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            final int index = i;
+            optionLabel.addMouseListener(new MouseInputAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    setActiveOption(index);
+                    switchPage(index);
+                }
+            });
+
+            topPanel.add(optionLabel);
+            optionLabels[i] = optionLabel;
+            x += 120;
+            if (i == 2) {
+                x = 30;
+                y += 15;
+            }
+        }
+
+        followingCountLabel = new JLabel(String.valueOf(followingUsers.size()));
+        followingCountLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        followingCountLabel.setForeground(Color.BLACK);
+        followingCountLabel.setBounds(90, 50, 50, 20);
+        topPanel.add(followingCountLabel);
+
+        followerCountLabel = new JLabel(String.valueOf(followerCount));
+        followerCountLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        followerCountLabel.setForeground(Color.BLACK);
+        followerCountLabel.setBounds(210, 50, 50, 20);
+        topPanel.add(followerCountLabel);
+
+        return topPanel;
     }
 
 

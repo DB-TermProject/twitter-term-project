@@ -34,10 +34,6 @@ public class UpdateMemberInformationPage extends JFrame {
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        Connection connection = null; // 여기에 실제 Connection 객체 초기화 필요
-        SwingUtilities.invokeLater(() -> new UpdateMemberInformationPage(connection));
-    }
 }
 
 

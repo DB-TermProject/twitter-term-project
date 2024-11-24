@@ -4,24 +4,15 @@ import org.example.domain.user.service.UserService;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.sql.Connection;
 
-public class ChangePasswordPage extends JFrame {
+public class ChangePasswordPage extends JPanel {
     private UserService userService;
 
     public ChangePasswordPage(Connection con) {
-        super("Change Password");
         this.userService = new UserService();
-        setTitle("Change Password");
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-        setSize(450, 700);
-        setResizable(false);
-        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
 
         // 메인 패널 생성
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -38,7 +29,7 @@ public class ChangePasswordPage extends JFrame {
         inputPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(50, 5, 10, 5); // 컴포넌트 간격 설정
+        gbc.insets = new Insets(50, 5, 10, 5);
 
         // 현재 비밀번호
         JLabel currentPasswordLabel = new JLabel("기존 비밀번호:");
@@ -87,12 +78,12 @@ public class ChangePasswordPage extends JFrame {
 
         JButton changeButton = new JButton("확인");
         changeButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-        changeButton.setBackground(Color.WHITE); // 배경색 흰색
+        changeButton.setBackground(Color.WHITE);
         changeButton.setForeground(Color.BLACK);
 
         JButton cancelButton = new JButton("취소");
         cancelButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-        cancelButton.setBackground(Color.WHITE); // 배경색 흰색
+        cancelButton.setBackground(Color.WHITE);
         cancelButton.setForeground(Color.BLACK);
 
         buttonPanel.add(changeButton);
@@ -101,39 +92,19 @@ public class ChangePasswordPage extends JFrame {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         add(mainPanel);
 
-        // 창 닫기 이벤트
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int flag = JOptionPane.showConfirmDialog(null, "Are You Sure To Exit Twitter?", "Confirm", JOptionPane.OK_CANCEL_OPTION);
-                if (flag == JOptionPane.OK_OPTION) {
-                    System.exit(0);
-                }
-            }
-        });
-
         // 버튼 동작 추가
-        changeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-
-
+        changeButton.addActionListener(e -> {
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window != null) {
+                window.dispose();
             }
         });
 
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
+        cancelButton.addActionListener(e -> {
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window != null) {
+                window.dispose();
             }
         });
-
-        setVisible(true);
     }
 }
-
-
-
-
-
