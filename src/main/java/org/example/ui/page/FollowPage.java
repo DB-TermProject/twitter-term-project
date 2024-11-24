@@ -194,7 +194,7 @@ public class FollowPage extends JFrame {
         scrollPane.setBounds(30, 150, 330, 425);  // 높이를 425로 수정
 
         // 네비게이션 패널 추가
-        NavigationPanel navigationPanel = new NavigationPanel(this, con);
+        NavigationPanel navigationPanel = new NavigationPanel(this, connection);
         navigationPanel.setBounds(0, 610, 450, 40);  // 위치와 크기 설정
         add(navigationPanel);
 
