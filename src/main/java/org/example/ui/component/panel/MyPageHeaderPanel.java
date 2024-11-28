@@ -1,11 +1,16 @@
 package org.example.ui.component.panel;
 
 import org.example.ui.component.button.RoundButton;
+import org.example.ui.page.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MyPageHeaderPanel extends JPanel {
+
+
     public MyPageHeaderPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -38,7 +43,22 @@ public class MyPageHeaderPanel extends JPanel {
         button1.setOpaque(false);
         button1.setBorder(null);
         button1.setIcon(new ImageIcon(new ImageIcon("src/main/java/org/example/asset/myInformationChange.png").getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+        button1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                MainFrame.getInstance().showPage("updateInformation");
+            }
 
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button1.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button1.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
         // 이미지 덮어씌울 버튼 2
         RoundButton button2 = new RoundButton("");
         button2.setContentAreaFilled(false);
@@ -47,6 +67,23 @@ public class MyPageHeaderPanel extends JPanel {
         button2.setOpaque(false);
         button2.setBorder(null);
         button2.setIcon(new ImageIcon(new ImageIcon("src/main/java/org/example/asset/passwordChange.png").getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+        button2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                MainFrame.getInstance().showPage("changePassword");
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button2.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button2.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+
 
         rightContainer.add(button1);
         rightContainer.add(button2);
@@ -54,7 +91,6 @@ public class MyPageHeaderPanel extends JPanel {
         // 왼쪽과 오른쪽 컨테이너를 헤더에 추가
         add(leftContainer, BorderLayout.WEST);
         add(rightContainer, BorderLayout.EAST);
+
     }
 }
-
-

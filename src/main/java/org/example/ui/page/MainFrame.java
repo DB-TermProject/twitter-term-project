@@ -40,6 +40,12 @@ public class MainFrame extends JFrame {
         contentPanel.add(new SignUpPage(connection), "signup");
         contentPanel.add(new ChangePasswordPage(connection), "changePassword");
 
+
+        JPanel updatePanel = new JPanel(new BorderLayout());
+        updatePanel.add(new UpdateMemberInformationPage(connection), BorderLayout.CENTER);
+        updatePanel.add(new NavigationPanel(this, connection), BorderLayout.SOUTH);
+        contentPanel.add(updatePanel, "updateInformation");
+
         // 메인 페이지들 (네비게이션 바 포함)
         JPanel homePanel = new JPanel(new BorderLayout());
         homePanel.add(HomeFeedPage.getInstance(connection), BorderLayout.CENTER);
