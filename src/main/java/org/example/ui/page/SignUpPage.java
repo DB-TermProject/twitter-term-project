@@ -91,22 +91,16 @@ public class SignUpPage extends JPanel {
 
             try {
                 userUseCase.signUp(new UserReqDTO.SignUp(email, password, name));
+                JOptionPane.showMessageDialog(SignUpPage.this, "<html>Congratulations!<br>Sign Up is complete</html>");
+
+                MainFrame mainFrame = MainFrame.getInstance();
+                mainFrame.showPage("login");
+
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
 
-            if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else if (email.equals("test@example.com")) {
-                JOptionPane.showMessageDialog(this, "This Email is already in use.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "<html>Congratulations!<br>Sign Up is complete</html>");
-                Window window = SwingUtilities.getWindowAncestor(this);
-                if (window != null) {
-                    window.setVisible(false);
-                }
-                SwingUtilities.invokeLater(() -> new LoginPage(con));
-            }
+
         });
         add(signUpButton);
 
